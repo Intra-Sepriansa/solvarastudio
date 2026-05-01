@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureRateLimits();
     }
 
     /**
@@ -46,5 +50,20 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    /**
+     * Configure named rate limiters used by the public API.
+     */
+    protected function configureRateLimits(): void
+    {
+        RateLimiter::for('contact-form', fn (Request $request) => [
+            Limit::perMinute(5)->by((string) $request->ip()),
+            Limit::perDay(30)->by((string) $request->ip()),
+        ]);
+
+        RateLimiter::for('admin-login', fn (Request $request) => [
+            Limit::perMinute(10)->by((string) $request->ip()),
+        ]);
     }
 }

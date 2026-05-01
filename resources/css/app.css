@@ -9,9 +9,26 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Plus Jakarta Sans', 'Inter', 'Instrument Sans', ui-sans-serif,
+        system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-display:
+        'Instrument Serif', 'Fraunces', 'Cormorant Garamond', ui-serif, Georgia,
+        'Times New Roman', serif;
+    --font-mono:
+        'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        'Liberation Mono', 'Courier New', monospace;
+
+    --color-ink: #111827;
+    --color-muted-ink: #64748b;
+    --color-teal: #145c5a;
+    --color-teal-soft: #1d7a76;
+    --color-mint: #eaf7f4;
+    --color-mist: #eef5ff;
+    --color-gold: #d8b56d;
+    --color-coral: #ef6f61;
+    --color-soft: #f8fafc;
+    --color-line: #e5e7eb;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -86,7 +103,7 @@
     --chart-3: oklch(0.398 0.07 227.392);
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
+    --radius: 0.5rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
     --sidebar-primary: oklch(0.205 0 0);
@@ -139,5 +156,150 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+}
+
+/* Solvara landing page utilities */
+@layer utilities {
+    .font-display {
+        font-family: var(--font-display);
+        letter-spacing: -0.01em;
+    }
+
+    .text-ink {
+        color: var(--color-ink);
+    }
+
+    .text-muted-ink {
+        color: var(--color-muted-ink);
+    }
+
+    .bg-mint {
+        background-color: var(--color-mint);
+    }
+
+    .bg-mist {
+        background-color: var(--color-mist);
+    }
+
+    .bg-soft {
+        background-color: var(--color-soft);
+    }
+
+    .bg-teal {
+        background-color: var(--color-teal);
+    }
+
+    .text-teal {
+        color: var(--color-teal);
+    }
+
+    .text-gold {
+        color: var(--color-gold);
+    }
+
+    .border-line {
+        border-color: var(--color-line);
+    }
+
+    .ring-teal {
+        --tw-ring-color: color-mix(in srgb, var(--color-teal) 60%, transparent);
+    }
+
+    /* Subtle teal underline used for highlight phrases */
+    .accent-underline {
+        background-image: linear-gradient(
+            transparent 70%,
+            color-mix(in srgb, var(--color-gold) 70%, transparent) 70%
+        );
+        padding: 0 0.08em;
+    }
+
+    .grid-bg {
+        background-image:
+            linear-gradient(
+                to right,
+                color-mix(in srgb, var(--color-line) 70%, transparent) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                to bottom,
+                color-mix(in srgb, var(--color-line) 70%, transparent) 1px,
+                transparent 1px
+            );
+        background-size: 56px 56px;
+    }
+
+    .focus-ring:focus-visible {
+        outline: none;
+        box-shadow:
+            0 0 0 3px color-mix(in srgb, var(--color-teal) 22%, transparent),
+            0 0 0 1px var(--color-teal);
+    }
+}
+
+/* Animated background blobs for hero (very soft, slow) */
+@keyframes solvara-float-a {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(2%, -1.5%, 0) scale(1.04);
+    }
+}
+
+@keyframes solvara-float-b {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(-1.5%, 1.5%, 0) scale(1.03);
+    }
+}
+
+@keyframes solvara-float-c {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(1.2%, 1%, 0) scale(0.98);
+    }
+}
+
+.solvara-blob {
+    will-change: transform;
+}
+
+.solvara-blob-a {
+    animation: solvara-float-a 18s ease-in-out infinite;
+}
+
+.solvara-blob-b {
+    animation: solvara-float-b 22s ease-in-out infinite;
+}
+
+.solvara-blob-c {
+    animation: solvara-float-c 26s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .solvara-blob-a,
+    .solvara-blob-b,
+    .solvara-blob-c {
+        animation: none !important;
+    }
+
+    html {
+        scroll-behavior: auto;
     }
 }
