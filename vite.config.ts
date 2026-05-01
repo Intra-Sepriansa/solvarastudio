@@ -12,6 +12,13 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
+                bunny('Plus Jakarta Sans', {
+                    weights: [300, 400, 500, 600, 700],
+                }),
+                bunny('Instrument Serif', {
+                    weights: [400],
+                    italics: true,
+                }),
                 bunny('Instrument Sans', {
                     weights: [400, 500, 600],
                 }),
