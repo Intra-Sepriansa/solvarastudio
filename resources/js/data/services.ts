@@ -1,60 +1,103 @@
 import {
     Activity,
-    LayoutDashboard,
-    Megaphone,
-    Server,
+    Cctv,
+    CloudCog,
+    RadioTower,
+    Router,
     ShieldCheck,
     Sparkles,
+    Smartphone,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 export type Service = {
     id: string;
     title: string;
     description: string;
-    icon: typeof Sparkles;
+    icon: LucideIcon;
+    badge: string;
+    points: string[];
 };
 
 export const services: Service[] = [
     {
-        id: 'company-profile',
-        title: 'Website company profile',
+        id: 'web-platform',
+        title: 'Website & Web App',
         description:
-            'Untuk bisnis yang butuh profil profesional, struktur jelas, dan mudah dikembangkan.',
+            'Company profile, landing page, dashboard, dan aplikasi web yang siap dipakai bisnis.',
         icon: Sparkles,
+        badge: 'Web',
+        points: ['Landing page', 'Dashboard admin', 'Web application'],
     },
     {
-        id: 'landing-campaign',
-        title: 'Landing page campaign',
+        id: 'mobile-experience',
+        title: 'Mobile Experience',
         description:
-            'Untuk promosi produk, event, ads campaign, dan validasi penawaran baru.',
-        icon: Megaphone,
+            'Alur mobile, responsive UX, dan interface aplikasi yang nyaman untuk layar kecil.',
+        icon: Smartphone,
+        badge: 'Mobile',
+        points: ['Mobile UI flow', 'Responsive system', 'App-ready design'],
     },
     {
-        id: 'web-application',
-        title: 'Web application',
+        id: 'business-network',
+        title: 'Business Network Solutions',
         description:
-            'Untuk workflow digital, portal pelanggan, booking, katalog, atau tools operasional.',
-        icon: Activity,
+            'Setup WiFi, LAN, dan bandwidth agar operasional kantor, cafe, atau toko lebih stabil.',
+        icon: Router,
+        badge: 'Network',
+        points: ['WiFi cafe & kantor', 'LAN & kabel', 'Optimasi bandwidth'],
     },
     {
-        id: 'dashboard',
-        title: 'Dashboard / admin panel',
+        id: 'server-cloud',
+        title: 'Server & Cloud Solutions',
         description:
-            'Untuk mengelola data, transaksi, konten, laporan, dan aktivitas internal.',
-        icon: LayoutDashboard,
+            'Setup server, deploy aplikasi, database, backup, dan hardening awal.',
+        icon: CloudCog,
+        badge: 'Server',
+        points: [
+            'VPS / cloud / on-premise',
+            'App & database deploy',
+            'Backup data',
+        ],
     },
     {
-        id: 'api-backend',
-        title: 'API & backend system',
+        id: 'cctv-security',
+        title: 'CCTV & Security System',
         description:
-            'Untuk fondasi data, autentikasi, integrasi, storage, dan proses bisnis.',
-        icon: Server,
+            'Instalasi CCTV, DVR/NVR, monitoring via HP, dan integrasi jaringan.',
+        icon: Cctv,
+        badge: 'Security',
+        points: ['Instalasi kamera', 'Monitoring via HP', 'Storage rekaman'],
     },
     {
-        id: 'maintenance',
-        title: 'Maintenance & optimization',
+        id: 'isp-advanced-network',
+        title: 'ISP & Advanced Network',
         description:
-            'Untuk menjaga performa, keamanan, bug fixing, improvement, dan update berkala.',
+            'Infrastruktur skala besar untuk enterprise dan ISP: routing, traffic, dan NOC.',
+        icon: RadioTower,
+        badge: 'ISP',
+        points: ['Fiber / wireless', 'BGP & OSPF', 'Monitoring NOC'],
+    },
+    {
+        id: 'maintenance-quality',
+        title: 'Maintenance & Optimization',
+        description:
+            'Perawatan performa, keamanan, improvement, dan support setelah instalasi.',
         icon: ShieldCheck,
+        badge: 'Support',
+        points: [
+            'Performance check',
+            'Security review',
+            'After-install support',
+        ],
+    },
+    {
+        id: 'api-integration',
+        title: 'API & Integration',
+        description:
+            'Fondasi data, autentikasi, integrasi WhatsApp/payment, dan proses bisnis.',
+        icon: Activity,
+        badge: 'Backend',
+        points: ['REST API', 'Auth & role', 'External integration'],
     },
 ];

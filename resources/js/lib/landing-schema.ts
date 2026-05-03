@@ -9,7 +9,7 @@ export const organizationSchema = {
     url: 'https://solvarastudio.com',
     logo: 'https://solvarastudio.com/og-image.png',
     description:
-        'Studio digital untuk pembuatan website, web application, dashboard, sistem internal, API, dan landing page.',
+        'Studio digital untuk pembuatan website, web application, dashboard, sistem internal, API, mobile experience, jaringan bisnis, server, cloud, CCTV, dan infrastruktur ISP.',
     sameAs: [
         'https://instagram.com/solvarastudio',
         'https://linkedin.com',
@@ -27,22 +27,25 @@ export const organizationSchema = {
 export const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: 'Pembuatan website & aplikasi web',
+    name: 'Solusi web, mobile, network, server, dan aplikasi',
     provider: {
         '@type': 'Organization',
         name: 'Solvara Studio',
     },
     areaServed: 'Indonesia',
     serviceType: [
-        'Website company profile',
-        'Landing page campaign',
-        'Web application',
+        'Website & web application',
+        'Mobile experience',
+        'Business network solutions',
+        'Server & cloud solutions',
+        'CCTV & security system',
+        'ISP & advanced network',
         'Dashboard / admin panel',
         'API & backend system',
         'Maintenance & optimization',
     ],
     description:
-        'Solvara Studio merancang dan membangun produk digital untuk brand, UMKM, dan tim operasional yang butuh tampilan elegan tanpa mengorbankan fungsi.',
+        'Solvara Studio merancang produk digital dan infrastruktur IT untuk bisnis yang butuh website, aplikasi, jaringan, server, keamanan, dan support yang rapi.',
 };
 
 export const faqSchemaFromList = (

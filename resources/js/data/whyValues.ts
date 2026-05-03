@@ -16,39 +16,39 @@ export type WhyValue = {
 
 export const whyValues: WhyValue[] = [
     {
-        title: 'Scope tertulis sejak awal',
+        title: 'Konsultasi gratis',
         description:
-            'Setiap pekerjaan dimulai dari ruang lingkup, prioritas, dan batasan yang disepakati.',
+            'Kebutuhan awal dibaca dulu agar solusi tidak kebesaran atau kurang tepat.',
         icon: ScrollText,
     },
     {
-        title: 'Preview bertahap',
+        title: 'Tenaga berpengalaman',
         description:
-            'Progress bisa dilihat lewat staging preview, bukan hanya menunggu hasil akhir.',
+            'Web, mobile, network, server, dan security dikerjakan dengan pendekatan teknis yang jelas.',
         icon: GitBranch,
     },
     {
-        title: 'Komponen reusable',
+        title: 'Solusi sesuai kebutuhan',
         description:
-            'UI dibuat konsisten agar halaman baru lebih mudah dikembangkan.',
+            'Scope disusun dari kondisi bisnis, jumlah user, device, data, dan target operasional.',
         icon: Layers,
     },
     {
-        title: 'Documentation & handover',
+        title: 'Support setelah instalasi',
         description:
-            'Admin, endpoint, struktur konten, dan cara deploy dijelaskan dengan ringkas.',
+            'Setelah setup, ada catatan handover dan support awal untuk memastikan sistem berjalan.',
         icon: NotebookText,
     },
     {
-        title: 'Performance-aware build',
+        title: 'Siap untuk UMKM hingga corporate',
         description:
-            'Asset, route, query, dan layout diperhatikan agar pengalaman pengguna tetap ringan.',
+            'Pekerjaan bisa dimulai dari WiFi toko sampai network skala enterprise dan ISP.',
         icon: BookOpenCheck,
     },
     {
-        title: 'Komunikasi rapi',
+        title: 'Quality checklist',
         description:
-            'Update dibuat jelas, revisi dicatat, dan keputusan project tidak tercecer.',
+            'Performa, keamanan dasar, responsive view, backup, dan dokumentasi dicek sebelum handover.',
         icon: MessageSquare,
     },
 ];

@@ -13,6 +13,10 @@ export const faqs: FAQ[] = [
         answer: 'Bisa. Project dapat dimulai dari UX/UI design, development saja, atau full dari strategi konten sampai launch.',
     },
     {
+        question: 'Apakah bisa setup jaringan, server, atau CCTV?',
+        answer: 'Bisa. Kebutuhan akan dicek dari lokasi, jumlah user/device, target performa, keamanan, dan kondisi infrastruktur yang sudah ada.',
+    },
+    {
         question: 'Apakah bisa dibuatkan admin panel?',
         answer: 'Bisa. Admin panel dapat disiapkan untuk mengelola konten, data, user, transaksi, inquiry, atau resource lain sesuai kebutuhan.',
     },

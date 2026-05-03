@@ -170,7 +170,7 @@
 @layer utilities {
     .font-display {
         font-family: var(--font-display);
-        letter-spacing: -0.01em;
+        letter-spacing: 0;
     }
 
     .text-ink {
@@ -243,6 +243,512 @@
             0 0 0 3px color-mix(in srgb, var(--color-teal) 22%, transparent),
             0 0 0 1px var(--color-teal);
     }
+
+    .letter-swap-3d {
+        perspective: 320px;
+        transform-style: preserve-3d;
+        white-space: nowrap;
+    }
+
+    .letter-swap-3d__cell {
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        transform-style: preserve-3d;
+    }
+
+    .letter-swap-3d__front,
+    .letter-swap-3d__back {
+        display: inline-block;
+        transform-origin: 50% 55%;
+        transition:
+            transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
+            filter 560ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition-delay: var(--letter-delay, 0s);
+        will-change: transform, opacity, filter;
+    }
+
+    .letter-swap-3d__back {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        filter: blur(3px);
+        transform: translate3d(0, 115%, 0) rotateX(-82deg);
+    }
+
+    .group:hover .letter-swap-3d__front,
+    .group:focus-visible .letter-swap-3d__front {
+        opacity: 0;
+        filter: blur(3px);
+        transform: translate3d(0, -115%, 0) rotateX(82deg);
+    }
+
+    .group:hover .letter-swap-3d__back,
+    .group:focus-visible .letter-swap-3d__back {
+        opacity: 1;
+        filter: blur(0);
+        transform: translate3d(0, 0, 0) rotateX(0deg);
+    }
+
+    .solvara-scanline {
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(167, 227, 61, 0.82),
+            rgba(216, 181, 109, 0.52),
+            transparent
+        );
+        box-shadow: 0 0 28px rgba(167, 227, 61, 0.22);
+        animation: solvara-scanline 7s ease-in-out infinite;
+    }
+
+    .solvara-depth-surface::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: linear-gradient(
+            120deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.06) 38%,
+            transparent 62%
+        );
+        opacity: 0;
+        animation: solvara-surface-sheen 8s ease-in-out infinite;
+    }
+
+    .solvara-testimonial-marquee {
+        animation: solvara-testimonial-marquee-right 46s linear infinite;
+        will-change: transform;
+    }
+
+    .solvara-testimonial-marquee:hover,
+    .solvara-testimonial-marquee:focus-within {
+        animation-play-state: paused;
+    }
+
+    .solvara-landing {
+        --solvara-selection-bg: #a7e33d;
+        --solvara-selection-fg: #071007;
+        transition:
+            background-color 260ms ease,
+            color 260ms ease;
+    }
+
+    .solvara-landing::selection,
+    .solvara-landing *::selection {
+        background: var(--solvara-selection-bg);
+        color: var(--solvara-selection-fg);
+        -webkit-text-fill-color: var(--solvara-selection-fg);
+        text-shadow: none;
+    }
+
+    .solvara-landing.is-light {
+        --solvara-selection-bg: #a7e33d;
+        --solvara-selection-fg: #ffffff;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-logo,
+    .solvara-landing.is-light footer .bg-black {
+        --solvara-selection-bg: #a7e33d;
+        --solvara-selection-fg: #071007;
+    }
+
+    .solvara-landing.is-light #contact {
+        --solvara-selection-bg: #a7e33d;
+        --solvara-selection-fg: #071007;
+        color: #ffffff !important;
+    }
+
+    .solvara-landing.is-light #contact [class*='text-white'] {
+        --solvara-selection-bg: #a7e33d;
+        --solvara-selection-fg: #071007;
+    }
+
+    .solvara-hero-headline,
+    .solvara-hero-headline * {
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+    }
+
+    .solvara-hero-headline::selection,
+    .solvara-hero-headline *::selection {
+        text-shadow: none;
+    }
+
+    .solvara-landing.is-light {
+        background-color: #f6f8f2 !important;
+        color: #0b1110;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(11, 17, 16, 0.14) !important;
+        color: #0b1110 !important;
+        box-shadow:
+            0 22px 70px -34px rgba(11, 17, 16, 0.32),
+            0 1px 0 rgba(255, 255, 255, 0.92) inset !important;
+        --tw-ring-color: rgba(11, 17, 16, 0.08) !important;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-logo {
+        background: #0b1110 !important;
+        color: #ffffff !important;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-logo-dot {
+        background: #a7e33d !important;
+        box-shadow: 0 0 18px rgba(167, 227, 61, 0.42);
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-link {
+        color: rgba(11, 17, 16, 0.62) !important;
+        font-weight: 600;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-link:hover {
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-cta {
+        background: #a7e33d !important;
+        color: #0b1110 !important;
+        min-width: max-content;
+        box-shadow: 0 16px 34px -22px rgba(95, 149, 0, 0.65);
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-cta:hover {
+        background: #97d22e !important;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-cta-label {
+        background: #ffffff !important;
+        color: #0b1110 !important;
+        font-weight: 720;
+        box-shadow: 0 0 0 1px rgba(11, 17, 16, 0.04) inset;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-cta-icon {
+        color: #0b1110 !important;
+        background: #a7e33d !important;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-mobile-button {
+        background: rgba(11, 17, 16, 0.055) !important;
+        border-color: rgba(11, 17, 16, 0.12) !important;
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light .solvara-top-nav-mobile-button:hover {
+        background: rgba(11, 17, 16, 0.095) !important;
+    }
+
+    .solvara-landing.is-light .solvara-mobile-nav {
+        background: rgba(255, 255, 255, 0.96) !important;
+        border-color: rgba(11, 17, 16, 0.12) !important;
+        color: #0b1110 !important;
+        box-shadow: 0 18px 60px -34px rgba(11, 17, 16, 0.34) !important;
+    }
+
+    .solvara-landing.is-light .solvara-mobile-nav-link {
+        color: rgba(11, 17, 16, 0.68) !important;
+    }
+
+    .solvara-landing.is-light .solvara-mobile-nav-link:hover {
+        background: rgba(11, 17, 16, 0.055) !important;
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light .solvara-mobile-nav-cta {
+        background: #a7e33d !important;
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light #contact > div {
+        background:
+            radial-gradient(
+                820px circle at 16% 18%,
+                rgba(167, 227, 61, 0.14),
+                transparent 42%
+            ),
+            radial-gradient(
+                720px circle at 88% 12%,
+                rgba(167, 227, 61, 0.08),
+                transparent 46%
+            ),
+            #050706 !important;
+        color: #ffffff !important;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 28px 90px -56px rgba(11, 17, 16, 0.72);
+    }
+
+    .solvara-landing.is-light #contact .text-black {
+        color: #ffffff !important;
+    }
+
+    .solvara-landing.is-light #contact [class*='text-black/'] {
+        color: rgba(255, 255, 255, 0.64) !important;
+    }
+
+    .solvara-landing.is-light #contact [class*='text-[#6ea314]'],
+    .solvara-landing.is-light #contact .text-gold {
+        color: #a7e33d !important;
+    }
+
+    .solvara-landing.is-light #contact [class*='text-[#9a3a31]'] {
+        color: #ffb4aa !important;
+    }
+
+    .solvara-landing.is-light #contact .bg-gold {
+        background-color: #a7e33d !important;
+    }
+
+    .solvara-landing.is-light #contact [class*='bg-[#a7e33d]'] {
+        color: #071007 !important;
+    }
+
+    .solvara-landing.is-light #contact form,
+    .solvara-landing.is-light #contact .bg-soft {
+        background: rgba(9, 13, 11, 0.94) !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        color: #ffffff !important;
+        box-shadow:
+            0 32px 90px -52px rgba(0, 0, 0, 0.74),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .solvara-landing.is-light #contact input,
+    .solvara-landing.is-light #contact select,
+    .solvara-landing.is-light #contact textarea {
+        background-color: rgba(255, 255, 255, 0.07) !important;
+        border-color: rgba(255, 255, 255, 0.13) !important;
+        color: #ffffff !important;
+    }
+
+    .solvara-landing.is-light #contact input::placeholder,
+    .solvara-landing.is-light #contact textarea::placeholder {
+        color: rgba(255, 255, 255, 0.36) !important;
+    }
+
+    .solvara-landing.is-light #contact input:focus,
+    .solvara-landing.is-light #contact select:focus,
+    .solvara-landing.is-light #contact textarea:focus {
+        border-color: rgba(167, 227, 61, 0.72) !important;
+        --tw-ring-color: rgba(167, 227, 61, 0.26) !important;
+    }
+
+    .solvara-landing.is-light #contact select option {
+        background-color: #0b1110;
+        color: #ffffff;
+    }
+
+    .solvara-landing.is-light #contact [class*='border-black/'] {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .solvara-landing.is-light #contact button[type='submit'] {
+        background-color: #a7e33d !important;
+        color: #071007 !important;
+    }
+
+    .solvara-landing.is-light #contact button[type='submit']:hover {
+        background-color: #b7f04d !important;
+    }
+
+    .solvara-landing.is-light #contact button[type='button'] {
+        border-color: rgba(255, 255, 255, 0.16) !important;
+        color: #ffffff !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) {
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) .text-white {
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) [class*='text-white/'] {
+        color: rgba(11, 17, 16, 0.62) !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) [class*='text-white/8'],
+    .solvara-landing.is-light section:not(#contact) [class*='text-white/7'] {
+        color: rgba(11, 17, 16, 0.78) !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) [class*='text-white/3'],
+    .solvara-landing.is-light section:not(#contact) [class*='text-white/4'] {
+        color: rgba(11, 17, 16, 0.44) !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) [class*='border-white/'] {
+        border-color: rgba(11, 17, 16, 0.12) !important;
+    }
+
+    .solvara-landing.is-light
+        section:not(#contact)
+        [class*='divide-white/']
+        > :not(:last-child) {
+        border-color: rgba(11, 17, 16, 0.12) !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) .bg-black,
+    .solvara-landing.is-light section:not(#contact) [class*='bg-black'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#050706]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#0a0d0c]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#0b0d0c]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#0d0f0e]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#0d100f]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#101110]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#101211]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#111312]'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-[#151914]'] {
+        background-color: rgba(255, 255, 255, 0.82) !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/4'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/5'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/6'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/8'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/10'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/12'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/14'],
+    .solvara-landing.is-light section:not(#contact) [class*='bg-white/20'] {
+        background-color: rgba(11, 17, 16, 0.055) !important;
+    }
+
+    .solvara-landing.is-light section:not(#contact) .from-black {
+        --tw-gradient-from: #f6f8f2 var(--tw-gradient-from-position) !important;
+        --tw-gradient-to: rgba(246, 248, 242, 0) var(--tw-gradient-to-position) !important;
+        --tw-gradient-stops:
+            var(--tw-gradient-from), var(--tw-gradient-to) !important;
+    }
+
+    .solvara-landing.is-light .solvara-depth-surface {
+        background-color: rgba(255, 255, 255, 0.84) !important;
+        box-shadow: 0 34px 110px -48px rgba(11, 17, 16, 0.24) !important;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel {
+        background: #ffffff !important;
+        border-color: rgba(11, 17, 16, 0.13) !important;
+        opacity: 1 !important;
+        backdrop-filter: none !important;
+        box-shadow:
+            0 36px 120px -54px rgba(11, 17, 16, 0.32),
+            inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel::before {
+        opacity: 0.18;
+        background: linear-gradient(
+            120deg,
+            transparent 0%,
+            rgba(167, 227, 61, 0.2) 38%,
+            transparent 62%
+        );
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel > [aria-hidden] {
+        opacity: 0.22;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-shell,
+    .solvara-landing.is-light .solvara-workspace-panel > div:first-child,
+    .solvara-landing.is-light .solvara-workspace-panel aside,
+    .solvara-landing.is-light
+        .solvara-workspace-panel
+        .solvara-workspace-shell
+        > div {
+        background: #ffffff !important;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel {
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel .text-white {
+        color: #0b1110 !important;
+        font-weight: 680;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel [class*='text-white/'] {
+        color: rgba(11, 17, 16, 0.68) !important;
+        font-weight: 560;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-panel [class*='text-white/7'],
+    .solvara-landing.is-light .solvara-workspace-panel [class*='text-white/8'] {
+        color: rgba(11, 17, 16, 0.86) !important;
+        font-weight: 650;
+    }
+
+    .solvara-landing.is-light
+        .solvara-workspace-panel
+        [class*='text-[#d2ed71]'],
+    .solvara-landing.is-light
+        .solvara-workspace-panel
+        [class*='text-[#a7e33d]'] {
+        color: #5f9500 !important;
+        font-weight: 720;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-bottom-wash {
+        display: none !important;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-menu-button {
+        background-color: transparent !important;
+        color: rgba(11, 17, 16, 0.64) !important;
+    }
+
+    .solvara-landing.is-light .solvara-workspace-menu-button:hover {
+        background-color: rgba(11, 17, 16, 0.055) !important;
+        color: #0b1110 !important;
+    }
+
+    .solvara-landing.is-light
+        .solvara-workspace-menu-button[aria-pressed='true'] {
+        background-color: rgba(167, 227, 61, 0.14) !important;
+        color: #5a8f06 !important;
+    }
+
+    .solvara-landing.is-light .solvara-icon-box {
+        background-color: #ffffff !important;
+        border-color: rgba(11, 17, 16, 0.13) !important;
+        color: #6fae0b !important;
+        box-shadow: 0 18px 46px rgba(11, 17, 16, 0.08);
+    }
+
+    .solvara-landing.is-light section:not(#contact) .solvara-icon-box,
+    .solvara-landing.is-light
+        section:not(#contact)
+        .group:hover
+        .solvara-icon-box {
+        background-color: #ffffff !important;
+        border-color: rgba(11, 17, 16, 0.13) !important;
+        color: #65ad00 !important;
+        box-shadow:
+            0 18px 46px rgba(11, 17, 16, 0.08),
+            0 1px 0 rgba(255, 255, 255, 0.9) inset;
+    }
+
+    .solvara-landing.is-light .solvara-why-value-glow {
+        opacity: 0;
+        background: radial-gradient(
+            340px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+            rgba(167, 227, 61, 0.08),
+            rgba(167, 227, 61, 0.035) 34%,
+            transparent 68%
+        ) !important;
+    }
+
+    .solvara-landing.is-light .group:hover .solvara-why-value-glow {
+        opacity: 1;
+    }
 }
 
 /* Animated background blobs for hero (very soft, slow) */
@@ -276,6 +782,47 @@
     }
 }
 
+@keyframes solvara-scanline {
+    0%,
+    18% {
+        transform: translateX(0);
+        opacity: 0;
+    }
+    42% {
+        opacity: 1;
+    }
+    78%,
+    100% {
+        transform: translateX(220%);
+        opacity: 0;
+    }
+}
+
+@keyframes solvara-surface-sheen {
+    0%,
+    45%,
+    100% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    58% {
+        opacity: 1;
+    }
+    74% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+@keyframes solvara-testimonial-marquee-right {
+    from {
+        transform: translate3d(-50%, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
 .solvara-blob {
     will-change: transform;
 }
@@ -295,8 +842,17 @@
 @media (prefers-reduced-motion: reduce) {
     .solvara-blob-a,
     .solvara-blob-b,
-    .solvara-blob-c {
+    .solvara-blob-c,
+    .solvara-scanline,
+    .solvara-depth-surface::before,
+    .solvara-testimonial-marquee {
         animation: none !important;
+        transform: none !important;
+    }
+
+    .letter-swap-3d__front,
+    .letter-swap-3d__back {
+        transition: none !important;
     }
 
     html {

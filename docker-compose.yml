@@ -1,0 +1,100 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: solvara-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    env_file:
+      - .env
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: solvarastudio
+      DB_USERNAME: solvara
+      DB_PASSWORD: password
+      CACHE_STORE: redis
+      QUEUE_CONNECTION: redis
+      SESSION_DRIVER: redis
+      REDIS_HOST: redis
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - solvara
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: solvara-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - solvara
+
+  mysql:
+    image: mysql:8.4
+    container_name: solvara-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: solvarastudio
+      MYSQL_USER: solvara
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - solvara
+
+  redis:
+    image: redis:7-alpine
+    container_name: solvara-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - solvara
+
+  vite:
+    image: node:22-alpine
+    container_name: solvara-vite
+    working_dir: /var/www/html
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/var/www/html
+      - node-modules:/var/www/html/node_modules
+    depends_on:
+      - app
+    networks:
+      - solvara
+
+networks:
+  solvara:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
+  node-modules:

@@ -1,0 +1,217 @@
+openapi: 3.1.0
+info:
+  title: Solvara Studio API
+  version: 1.0.0
+  description: Public contact and content API plus Sanctum-protected admin endpoints.
+servers:
+  - url: https://solvarastudio.com/api
+    description: Production
+  - url: http://solvarastudio.test/api
+    description: Local Herd
+paths:
+  /contact:
+    post:
+      summary: Submit a project inquiry.
+      tags: [Contact]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactSubmissionInput"
+      responses:
+        "201":
+          description: Contact submission stored.
+        "422":
+          description: Validation error.
+        "429":
+          description: Rate limited.
+  /services:
+    get:
+      summary: List active services.
+      tags: [Services]
+      responses:
+        "200":
+          description: Service collection.
+  /portfolios:
+    get:
+      summary: List published portfolio items.
+      tags: [Portfolios]
+      responses:
+        "200":
+          description: Portfolio collection.
+  /testimonials:
+    get:
+      summary: List featured testimonials.
+      tags: [Testimonials]
+      responses:
+        "200":
+          description: Testimonial collection.
+  /faqs:
+    get:
+      summary: List published FAQs.
+      tags: [FAQs]
+      responses:
+        "200":
+          description: FAQ collection.
+  /admin/login:
+    post:
+      summary: Issue a Sanctum bearer token for admin users.
+      tags: [Admin Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                device_name:
+                  type: string
+      responses:
+        "200":
+          description: Token issued.
+        "422":
+          description: Invalid credentials or non-admin user.
+  /admin/me:
+    get:
+      summary: Return the authenticated admin user.
+      tags: [Admin Auth]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: Authenticated admin user.
+        "401":
+          description: Unauthenticated.
+  /admin/logout:
+    post:
+      summary: Revoke the current Sanctum token.
+      tags: [Admin Auth]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: Token revoked.
+  /admin/portfolios:
+    get:
+      summary: List all portfolio records for admin.
+      tags: [Admin Portfolios]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: Portfolio collection.
+    post:
+      summary: Create a portfolio record.
+      tags: [Admin Portfolios]
+      security:
+        - sanctum: []
+      responses:
+        "201":
+          description: Portfolio created.
+  /admin/services:
+    get:
+      summary: List all services for admin.
+      tags: [Admin Services]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: Service collection.
+    post:
+      summary: Create a service record.
+      tags: [Admin Services]
+      security:
+        - sanctum: []
+      responses:
+        "201":
+          description: Service created.
+  /admin/testimonials:
+    get:
+      summary: List all testimonials for admin.
+      tags: [Admin Testimonials]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: Testimonial collection.
+    post:
+      summary: Create a testimonial record.
+      tags: [Admin Testimonials]
+      security:
+        - sanctum: []
+      responses:
+        "201":
+          description: Testimonial created.
+  /admin/faqs:
+    get:
+      summary: List all FAQs for admin.
+      tags: [Admin FAQs]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: FAQ collection.
+    post:
+      summary: Create an FAQ record.
+      tags: [Admin FAQs]
+      security:
+        - sanctum: []
+      responses:
+        "201":
+          description: FAQ created.
+  /admin/contact-submissions:
+    get:
+      summary: List contact submissions.
+      tags: [Admin Contact Submissions]
+      security:
+        - sanctum: []
+      responses:
+        "200":
+          description: Paginated contact submission collection.
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+  schemas:
+    ContactSubmissionInput:
+      type: object
+      required: [name, contact, project_type, budget, message]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        contact:
+          type: string
+          minLength: 5
+          maxLength: 150
+        project_type:
+          type: string
+          enum:
+            - Company profile
+            - Landing page
+            - Web application
+            - Dashboard / admin panel
+            - Backend / API
+            - Maintenance
+            - Belum yakin
+        budget:
+          type: string
+        deadline:
+          type: string
+          nullable: true
+        message:
+          type: string
+          minLength: 20
+          maxLength: 2000
+        company:
+          type: string
+          description: Honeypot field. Must be empty.

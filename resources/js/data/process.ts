@@ -13,9 +13,9 @@ export const processSteps: ProcessStep[] = [
     },
     {
         number: '02',
-        title: 'Struktur & UX',
+        title: 'Audit & Desain',
         description:
-            'Alur halaman, sitemap, user flow, dan konten dirapikan sebelum visual dibuat.',
+            'Alur halaman, kebutuhan device, denah jaringan, server, atau CCTV dirapikan sebelum eksekusi.',
     },
     {
         number: '03',
@@ -27,7 +27,7 @@ export const processSteps: ProcessStep[] = [
         number: '04',
         title: 'Development',
         description:
-            'Frontend dan backend dibangun bertahap dengan preview yang bisa dicek.',
+            'Frontend, backend, server, jaringan, dan integrasi dibangun bertahap dengan checkpoint yang bisa dicek.',
     },
     {
         number: '05',
@@ -39,6 +39,6 @@ export const processSteps: ProcessStep[] = [
         number: '06',
         title: 'Support',
         description:
-            'Handover, dokumentasi ringan, dan support awal disiapkan agar tim bisa lanjut.',
+            'Handover, dokumentasi ringan, dan support awal disiapkan agar operasional bisa lanjut.',
     },
 ];

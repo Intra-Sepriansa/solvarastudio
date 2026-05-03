@@ -1,5 +1,12 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';
+import {
+    FolderKanban,
+    Globe2,
+    Images,
+    LayoutGrid,
+    Menu,
+    Search,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Breadcrumbs } from '@/components/breadcrumbs';
@@ -32,7 +39,9 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
-import { dashboard } from '@/routes';
+import { dashboard, home } from '@/routes';
+import { index as adminProjectsIndex } from '@/routes/admin/projects';
+import { index as publicProjectsIndex } from '@/routes/projects';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -47,16 +56,24 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Projects',
+        href: adminProjectsIndex(),
+        icon: FolderKanban,
+    },
+];
+
 const rightNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'Website',
+        href: home(),
+        icon: Globe2,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Portfolio',
+        href: publicProjectsIndex(),
+        icon: Images,
     },
 ];
 
@@ -68,6 +85,8 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
     const { auth } = page.props;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
+    const navItems = auth.user?.is_admin ? adminNavItems : mainNavItems;
+    const homeHref = auth.user?.is_admin ? adminProjectsIndex() : dashboard();
 
     return (
         <>
@@ -80,7 +99,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="mr-2 h-[34px] w-[34px]"
+                                    className="mr-2 h-8.5 w-8.5"
                                 >
                                     <Menu className="h-5 w-5" />
                                 </Button>
@@ -98,7 +117,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
-                                            {mainNavItems.map((item) => (
+                                            {navItems.map((item) => (
                                                 <Link
                                                     key={item.title}
                                                     href={item.href}
@@ -135,7 +154,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     </div>
 
                     <Link
-                        href={dashboard()}
+                        href={homeHref}
                         prefetch
                         className="flex items-center space-x-2"
                     >
@@ -146,7 +165,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                     <div className="ml-6 hidden h-full items-center space-x-6 lg:flex">
                         <NavigationMenu className="flex h-full items-stretch">
                             <NavigationMenuList className="flex h-full items-stretch space-x-2">
-                                {mainNavItems.map((item, index) => (
+                                {navItems.map((item, index) => (
                                     <NavigationMenuItem
                                         key={index}
                                         className="relative flex h-full items-center"
@@ -183,7 +202,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 size="icon"
                                 className="group h-9 w-9 cursor-pointer"
                             >
-                                <Search className="!size-5 opacity-80 group-hover:opacity-100" />
+                                <Search className="size-5! opacity-80 group-hover:opacity-100" />
                             </Button>
                             <div className="ml-1 hidden gap-1 lg:flex">
                                 {rightNavItems.map((item) => (

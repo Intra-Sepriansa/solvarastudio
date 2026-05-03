@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 
@@ -20,7 +21,17 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LoginResponse::class, fn (): LoginResponse => new class implements LoginResponse
+        {
+            public function toResponse($request)
+            {
+                if ($request->user()?->is_admin) {
+                    return redirect()->intended(route('admin.projects.index'));
+                }
+
+                return redirect()->intended(config('fortify.home'));
+            }
+        });
     }
 
     /**
