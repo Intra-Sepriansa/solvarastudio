@@ -5,6 +5,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 test('renders the home landing page', function (): void {
     $this->get(route('home'))
         ->assertOk()
+        ->assertHeaderMissing('Link')
         ->assertInertia(fn (Assert $page) => $page
             ->component('welcome'));
 });
