@@ -58,14 +58,9 @@ URL Docker:
 - MySQL host port: `3307`
 - Redis host port: `6380`
 
-Default admin dari seeder:
-
-| Field | Value |
-| --- | --- |
-| Email | `admin@solvarastudio.com` |
-| Password | `password` |
-
-Ganti kredensial admin sebelum production.
+Admin user dibuat oleh `database/seeders/DatabaseSeeder.php` saat menjalankan seeder.
+Jangan simpan password admin plaintext di dokumentasi atau file yang dipush ke repository.
+Untuk environment baru, set password admin secara lokal setelah seeding dan ganti sebelum production.
 
 ## Frontend
 
