@@ -1654,7 +1654,7 @@ function Hero() {
     return (
         <section
             id="top"
-            className="relative isolate min-h-[calc(100svh-16px)] w-full overflow-hidden rounded-[24px] bg-white sm:rounded-4xl 2xl:rounded-[44px]"
+            className="relative isolate min-h-[calc(100svh-16px)] w-full overflow-hidden rounded-3xl bg-white sm:rounded-4xl 2xl:rounded-[44px]"
         >
             <img
                 src="/landing/solvara-hero-texture.png"
@@ -2639,7 +2639,7 @@ function SolutionDetailSection() {
                                         )}
                                         <span
                                             className={cn(
-                                                'relative flex size-8.5 shrink-0 items-center justify-center rounded-[12px] border transition-colors duration-300 min-[390px]:size-9 sm:size-10 sm:rounded-[14px]',
+                                                'relative flex size-8.5 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300 min-[390px]:size-9 sm:size-10 sm:rounded-[14px]',
                                                 isActive
                                                     ? 'border-black/12 bg-black text-[#a7e33d]'
                                                     : 'border-white/10 bg-white/5 text-[#a7e33d]',
@@ -2785,7 +2785,7 @@ function SolutionDetailSection() {
 
                                 <div className="min-w-0 bg-white p-4 min-[390px]:p-5 sm:p-7 lg:p-9 dark:bg-[#101211]">
                                     <div className="overflow-hidden rounded-[22px] border border-black/10 bg-white shadow-[0_28px_110px_-72px_rgba(11,17,16,0.58)] sm:rounded-3xl dark:border-white/10 dark:bg-[#060907] dark:shadow-[0_28px_110px_-72px_rgba(167,227,61,0.5)]">
-                                        <div className="relative aspect-[3/2] min-h-58 overflow-hidden bg-black sm:min-h-80 lg:min-h-100">
+                                        <div className="relative aspect-3/2 min-h-58 overflow-hidden bg-black sm:min-h-80 lg:min-h-100">
                                             {active.imageSrc ? (
                                                 <motion.img
                                                     key={active.imageSrc}
@@ -3322,7 +3322,7 @@ function TeamSection() {
                                     </div>
 
                                     <div className="flex flex-col gap-6 border-t border-black/10 pt-7 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
-                                        <div className="relative mx-auto aspect-[0.72/1] w-full max-w-[150px] overflow-hidden rounded-full border border-black/12 bg-black/10 shadow-[0_28px_80px_-48px_rgba(0,0,0,0.72)] sm:max-w-[180px] lg:max-w-[205px] xl:max-w-[230px]">
+                                        <div className="relative mx-auto aspect-[0.72/1] w-full max-w-37.5 overflow-hidden rounded-full border border-black/12 bg-black/10 shadow-[0_28px_80px_-48px_rgba(0,0,0,0.72)] sm:max-w-45 lg:max-w-51.25 xl:max-w-57.5">
                                             {member.photo ? (
                                                 <img
                                                     src={member.photo}
