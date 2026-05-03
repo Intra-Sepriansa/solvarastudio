@@ -7,7 +7,7 @@ export const organizationSchema = {
     '@type': 'Organization',
     name: 'Solvara Studio',
     url: 'https://solvarastudio.com',
-    logo: 'https://solvarastudio.com/og-image.png',
+    logo: 'https://solvarastudio.com/logo.png',
     description:
         'Studio digital untuk pembuatan website, web application, dashboard, sistem internal, API, mobile experience, jaringan bisnis, server, cloud, CCTV, dan infrastruktur ISP.',
     sameAs: [

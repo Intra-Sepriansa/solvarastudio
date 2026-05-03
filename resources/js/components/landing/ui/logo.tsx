@@ -17,12 +17,13 @@ export function Logo({ className, compact = false }: LogoProps) {
         >
             <span
                 aria-hidden
-                className="relative inline-flex size-7 items-center justify-center rounded-full border border-line bg-white"
+                className="relative inline-flex size-8 items-center justify-center overflow-hidden rounded-full border border-line bg-white"
             >
-                <span className="font-display text-[15px] leading-none text-ink">
-                    S
-                </span>
-                <span className="absolute -top-0.5 -right-0.5 size-1.5 rounded-full bg-gold" />
+                <img
+                    src="/logo.png"
+                    alt=""
+                    className="size-full object-cover"
+                />
             </span>
             {!compact && (
                 <span className="font-display text-[18px] tracking-tight text-ink">

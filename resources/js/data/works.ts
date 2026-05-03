@@ -9,6 +9,12 @@ export type Work = {
     summary: string;
     challenge: string;
     result: string;
+    overview: string[];
+    delivery: {
+        label: string;
+        value: string;
+    }[];
+    workflow: string[];
     stack: string[];
     techStack: string[];
     features: string[];
@@ -32,6 +38,34 @@ export const works: Work[] = [
         challenge:
             'Project ini berfungsi sebagai fondasi aplikasi. Fokusnya bukan domain bisnis tertentu, tetapi menyiapkan struktur awal yang rapi agar SaaS, sistem admin, atau dashboard internal bisa mulai dibangun lebih cepat.',
         result: 'Auth flow, dashboard dasar, settings, dan UI starter sudah siap sebagai base yang bisa dikembangkan menjadi produk operasional.',
+        overview: [
+            'ciper dibuat sebagai base aplikasi agar produk Laravel + React tidak perlu selalu dimulai dari halaman kosong. Struktur awalnya sudah menutup kebutuhan umum seperti auth, dashboard, settings, appearance, dan layout authenticated.',
+            'Fondasi ini cocok ketika project berikutnya perlu langsung masuk ke modul bisnis: data, role, billing, workflow internal, atau dashboard operasional tanpa mengulang shell UI dari awal.',
+        ],
+        delivery: [
+            {
+                label: 'Core flow',
+                value: 'Auth, dashboard, settings, appearance, dan security flow',
+            },
+            {
+                label: 'Frontend',
+                value: 'React 19, TypeScript, Tailwind v4, dan reusable UI shell',
+            },
+            {
+                label: 'Backend',
+                value: 'Laravel 13, Fortify, Wayfinder, dan route typing',
+            },
+            {
+                label: 'Quality',
+                value: 'Pest, Pint, Vite build, dan struktur siap modular',
+            },
+        ],
+        workflow: [
+            'Audit kebutuhan aplikasi dan modul awal',
+            'Aktifkan auth, settings, dan layout authenticated',
+            'Rapikan komponen UI agar siap dipakai ulang',
+            'Siapkan fondasi untuk modul bisnis berikutnya',
+        ],
         stack: ['Laravel 13', 'React 19', 'TypeScript', 'Tailwind v4'],
         techStack: [
             'Laravel 13',
@@ -86,6 +120,34 @@ export const works: Work[] = [
         challenge:
             'Platform belajar bahasa membutuhkan alur belajar bertahap, latihan yang tersimpan, evaluasi progress, dan admin panel untuk mengelola konten pembelajaran.',
         result: 'LinguaPath berkembang menjadi produk EdTech matang dengan study path, practice mode, exam simulation, vocabulary SRS, mistake journal, writing/speaking practice, analytics, dan admin panel.',
+        overview: [
+            'LinguaPath dirancang sebagai platform belajar TOEFL ITP-style dengan perjalanan belajar yang terstruktur. User tidak hanya membaca materi, tetapi juga masuk ke latihan, simulasi, review kesalahan, vocabulary SRS, dan analytics progress.',
+            'Sisi admin dibuat untuk mengelola konten pembelajaran, soal, reading passage, audio, dan review aset, sehingga platform bisa berkembang sebagai produk EdTech yang kontennya terus bertambah.',
+        ],
+        delivery: [
+            {
+                label: 'Learning flow',
+                value: 'Study path, lesson, practice, exam simulation, dan result',
+            },
+            {
+                label: 'Retention',
+                value: 'Vocabulary SRS, mistake journal, review status, dan feedback',
+            },
+            {
+                label: 'Analytics',
+                value: 'Progress belajar, performa skill, intensitas latihan, dan charts',
+            },
+            {
+                label: 'Admin',
+                value: 'Question bank, passage, audio assets, bulk review, dan import',
+            },
+        ],
+        workflow: [
+            'Petakan journey belajar dan tipe latihan',
+            'Bangun engine latihan, exam, dan answer tracking',
+            'Tambahkan review kesalahan, SRS, dan analytics',
+            'Siapkan admin workflow untuk konten pembelajaran',
+        ],
         stack: ['Laravel 13', 'Inertia v3', 'React 19', 'Framer Motion'],
         techStack: [
             'Laravel 13',
@@ -146,6 +208,34 @@ export const works: Work[] = [
         challenge:
             'Rekomendasi jurusan tidak cukup hanya berupa quiz sederhana. Sistem perlu membaca profil siswa, psikometri, constraint, bobot kriteria, dan memberi hasil yang bisa dijelaskan.',
         result: 'MajorMind menggabungkan RIASEC, Grit Scale, adaptive logic test, AHP, TOPSIS, SAW, profile matching, scenario lab, comparison, insights, dan export PDF.',
+        overview: [
+            'MajorMind dibangun untuk membantu siswa mengambil keputusan jurusan dengan data yang lebih bisa dijelaskan. Sistem membaca minat, grit, logic test, constraint, bobot kriteria, dan beberapa algoritma scoring sebelum memberi ranking.',
+            'Bagian pentingnya bukan hanya hasil akhir, tetapi explainability. User bisa melihat perbandingan, sensitivity analysis, scenario lab, breakdown algoritma, sampai export PDF untuk diskusi lanjutan.',
+        ],
+        delivery: [
+            {
+                label: 'Assessment',
+                value: 'RIASEC, Grit Scale, adaptive logic test, dan profile input',
+            },
+            {
+                label: 'Scoring',
+                value: 'AHP, TOPSIS, SAW, profile matching, dan RIASEC affinity',
+            },
+            {
+                label: 'Decision lab',
+                value: 'Scenario, comparison, Monte Carlo, insight, dan sensitivity',
+            },
+            {
+                label: 'Output',
+                value: 'Dashboard hasil, explainability, dan export PDF',
+            },
+        ],
+        workflow: [
+            'Definisikan kriteria, constraint, dan bobot keputusan',
+            'Bangun assessment engine dan scoring pipeline',
+            'Tambahkan comparison, scenario lab, dan visual explainability',
+            'Validasi output agar ranking bisa dipahami user',
+        ],
         stack: ['Laravel 13', 'React 19', 'Three.js', 'Recharts'],
         techStack: [
             'Laravel 13',
@@ -208,6 +298,34 @@ export const works: Work[] = [
         challenge:
             'Portal sekolah membutuhkan public site yang informatif, CMS yang mudah dikelola, dashboard internal multi-role, PPDB, data alumni, jadwal, media, dan layanan sekolah.',
         result: 'SMANTEN berkembang menjadi platform digital sekolah yang menggabungkan website publik, admin CMS, dashboard guru/siswa/wali, PPDB, alumni, virtual tour, map, dan internal API.',
+        overview: [
+            'SMANTEN dibuat sebagai platform sekolah yang menyatukan website publik, CMS, PPDB, dashboard internal, data akademik, alumni, media, jadwal, dan layanan sekolah dalam satu sistem.',
+            'Strukturnya disiapkan untuk banyak role. Admin mengelola konten dan data, guru/siswa/wali masuk ke dashboard sesuai kebutuhan, sementara pengunjung publik tetap mendapat pengalaman website yang rapi dan informatif.',
+        ],
+        delivery: [
+            {
+                label: 'Public site',
+                value: 'Profil, akademik, kesiswaan, PPDB, media, layanan, dan berita',
+            },
+            {
+                label: 'Dashboard',
+                value: 'Admin, guru, siswa, wali, role access, dan data operasional',
+            },
+            {
+                label: 'CMS',
+                value: 'Artikel, organisasi, portfolio, guru, siswa, jadwal, dan media',
+            },
+            {
+                label: 'Experience',
+                value: 'Virtual tour, map, alumni, sitemap XML, dan internal API',
+            },
+        ],
+        workflow: [
+            'Kelompokkan kebutuhan publik, admin, dan role internal',
+            'Bangun CMS, dashboard, PPDB, alumni, dan jadwal',
+            'Integrasikan media, map, virtual tour, dan internal API',
+            'Rapikan navigasi agar portal tetap mudah dipakai banyak user',
+        ],
         stack: ['Laravel 13', 'Inertia v3', 'React Three Fiber', 'React Query'],
         techStack: [
             'Laravel 13',

@@ -57,6 +57,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import LanguageToggle from '@/components/language-toggle';
 import LogoLoop from '@/components/LogoLoop';
 import type { LogoItem } from '@/components/LogoLoop';
 import {
@@ -67,7 +68,6 @@ import {
 import { faqs } from '@/data/faqs';
 import { processSteps } from '@/data/process';
 import { services } from '@/data/services';
-import { metrics as proofMetrics } from '@/data/socialProof';
 import { techGroups } from '@/data/techStack';
 import { testimonials } from '@/data/testimonials';
 import { whyValues } from '@/data/whyValues';
@@ -79,6 +79,7 @@ import {
     organizationSchema,
     serviceSchema,
 } from '@/lib/landing-schema';
+import { useTranslator } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { login } from '@/routes';
 import { store as contactStore } from '@/routes/api/contact';
@@ -93,14 +94,15 @@ const META = {
 };
 
 const WHATSAPP_URL =
-    'https://wa.me/6280000000000?text=Halo%20Solvara%20Studio%2C%20saya%20ingin%20konsultasi%20solusi%20IT%20untuk%20bisnis.';
+    'https://wa.me/6281298523453?text=Halo%20Intra%20Sepriansa%2C%20saya%20ingin%20konsultasi%20project%20di%20Solvara%20Studio.';
+const BRAND_LOGO_SRC = '/logo.png';
 
 const navItems = [
-    { href: '#work', label: 'Work', hasDropdown: false },
-    { href: '#services', label: 'Services', hasDropdown: true },
-    { href: '#solutions', label: 'Solutions', hasDropdown: false },
-    { href: '#process', label: 'Process', hasDropdown: false },
-    { href: '#contact', label: 'Contact', hasDropdown: false },
+    { href: '#work', label: 'Karya', hasDropdown: false },
+    { href: '#services', label: 'Layanan', hasDropdown: true },
+    { href: '#solutions', label: 'Solusi', hasDropdown: false },
+    { href: '#process', label: 'Proses', hasDropdown: false },
+    { href: '#contact', label: 'Kontak', hasDropdown: false },
 ] as const;
 
 const miniMetrics = [
@@ -184,6 +186,358 @@ const teamMembers: TeamMember[] = [
         accent: '#a7e33d',
     },
 ];
+
+const webTeamCodeLines = [
+    "import { Head, Link } from '@inertiajs/react';",
+    "import { motion } from 'motion/react';",
+    "import { contactStore } from '@/routes/api/contact';",
+    "import { projectsIndex, projectShow } from '@/routes/projects';",
+    '',
+    "type SolvaraService = 'web' | 'mobile' | 'network' | 'server';",
+    '',
+    'const solvaraLanding = {',
+    "  brand: 'Solvara Studio',",
+    "  headline: 'Solusi IT, Network & Server untuk Bisnis Anda',",
+    "  stack: ['Laravel', 'Inertia', 'React', 'Tailwind'],",
+    '  routes: [projectsIndex.url(), contactStore.form().action],',
+    '};',
+    '',
+    'const webPlatform = {',
+    "  category: 'web' satisfies SolvaraService,",
+    "  scope: ['landing-page', 'admin-panel', 'project-crud'],",
+    "  quality: ['responsive-ui', 'seo-ready', 'fast-build'],",
+    "  support: ['brief', 'deploy', 'handover'],",
+    '};',
+    '',
+    'function buildProjectCard(project: Project) {',
+    '  return {',
+    '    title: project.name,',
+    '    href: projectShow(project.slug).url,',
+    "    media: project.cover_image ?? '/og-image.png',",
+    '    badge: project.category.toUpperCase(),',
+    '    isFeatured: project.is_featured,',
+    '  };',
+    '}',
+    '',
+    'async function submitConsultation(form: ContactForm) {',
+    '  const payload = {',
+    '    name: form.name.trim(),',
+    '    service: form.service ?? webPlatform.category,',
+    '    message: form.message,',
+    "    source: 'team-web-background',",
+    '  };',
+    '',
+    '  return contactStore.form().submit(payload);',
+    '}',
+    '',
+    'const launchChecklist = [',
+    "  'copywriting-clear',",
+    "  'mobile-layout-pass',",
+    "  'admin-auth-ready',",
+    "  'project-media-upload-ready',",
+    "  'production-build-pass',",
+    '];',
+    '',
+    'export function SolvaraWebExperience() {',
+    '  return (',
+    '    <LandingShell brand={solvaraLanding.brand}>',
+    '      <Hero headline={solvaraLanding.headline} />',
+    '      <ServiceGrid services={webPlatform.scope} />',
+    '      <ProjectShowcase route={projectsIndex.url()} />',
+    '      <ContactForm action={contactStore.form().action} />',
+    '    </LandingShell>',
+    '  );',
+    '}',
+    '',
+    'const adminProjectForm = {',
+    "  fields: ['name', 'category', 'image', 'video_url'],",
+    "  categories: ['web', 'mobile', 'network'],",
+    "  storage: 'public/projects',",
+    "  preview: 'cover-image-first',",
+    '};',
+    '',
+    'const serviceCards = solvaraLanding.stack.map((tool) => ({',
+    '  tool,',
+    "  status: launchChecklist.includes('production-build-pass'),",
+    "  tone: tool === 'Laravel' ? 'backend' : 'interface',",
+    '}));',
+    '',
+    'function normalizeProject(project: AdminProjectInput) {',
+    '  return {',
+    '    name: project.name.trim(),',
+    '    slug: project.name.toLowerCase().replaceAll(" ", "-"),',
+    '    category: project.category,',
+    '    image: project.image,',
+    '    videoUrl: project.video_url || null,',
+    '    published: Boolean(project.published_at),',
+    '  };',
+    '}',
+    '',
+    'const dashboardModules = [',
+    "  { key: 'overview', label: 'Project Overview' },",
+    "  { key: 'projects', label: 'CRUD Project' },",
+    "  { key: 'media', label: 'Image & Video' },",
+    "  { key: 'security', label: 'Admin Access' },",
+    '];',
+    '',
+    'function getProjectRoute(project: Project) {',
+    '  if (project.category === "network") {',
+    '    return `${projectShow(project.slug).url}?scope=network`;',
+    '  }',
+    '',
+    '  return projectShow(project.slug).url;',
+    '}',
+    '',
+    'const contactFlow = {',
+    "  entry: 'hero-cta',",
+    "  channel: 'whatsapp-or-form',",
+    "  validation: ['name', 'service', 'message'],",
+    "  response: 'brief-ready',",
+    '};',
+    '',
+    'function resolvePrimaryCta(service: SolvaraService) {',
+    '  const label = service === "web" ? "Diskusi Website" : "Konsultasi IT";',
+    '',
+    '  return {',
+    '    label,',
+    '    href: contactStore.form().action,',
+    '    intent: `${service}-consultation`,',
+    '  };',
+    '}',
+    '',
+    'const performanceBudget = {',
+    '  image: "lazy",',
+    '  motion: "reduced-motion-aware",',
+    '  bundle: "split-by-page",',
+    '  font: "self-hosted",',
+    '};',
+    '',
+    'const solvaraQualityGate = [',
+    "  'npm run build',",
+    "  'php artisan test --compact',",
+    "  'php artisan wayfinder:generate --with-form',",
+    "  'responsive-check:mobile-desktop',",
+    '];',
+    '',
+    'function publishLandingPage() {',
+    '  return {',
+    '    route: "/",',
+    '    page: "welcome.tsx",',
+    '    meta: solvaraLanding.headline,',
+    '    checks: solvaraQualityGate,',
+    '    ready: launchChecklist.every(Boolean),',
+    '  };',
+    '}',
+] as const;
+
+const networkTeamCodeLines = [
+    "import { ping, scanSubnet, watchTraffic } from '@/network/monitoring';",
+    "import { createBandwidthPolicy } from '@/network/bandwidth';",
+    "import { notifyNoc } from '@/network/noc-alerts';",
+    '',
+    "type DeviceRole = 'router' | 'switch' | 'access-point' | 'client';",
+    "type LinkMode = 'fiber' | 'wireless' | 'ethernet';",
+    '',
+    'const solvaraNetworkScope = {',
+    "  brand: 'Solvara Studio',",
+    "  service: 'Business Network Solutions',",
+    "  target: ['stable', 'secure', 'scalable'],",
+    "  sites: ['office', 'cafe', 'retail-store'],",
+    '};',
+    '',
+    'const topology = {',
+    "  router: { name: 'gateway-main', role: 'router' as DeviceRole },",
+    "  switches: ['core-switch', 'floor-switch-01'],",
+    "  accessPoints: ['ap-lobby', 'ap-office', 'ap-meeting-room'],",
+    "  uplink: { mode: 'fiber' as LinkMode, backup: 'wireless' as LinkMode },",
+    '};',
+    '',
+    'const bandwidthProfile = createBandwidthPolicy({',
+    '  guestLimitMbps: 12,',
+    '  staffLimitMbps: 35,',
+    '  priority: ["pos-system", "meeting-call", "admin-dashboard"],',
+    '  block: ["torrent", "unknown-heavy-traffic"],',
+    '});',
+    '',
+    'async function auditNetwork(site: BusinessSite) {',
+    '  const devices = await scanSubnet(site.subnet);',
+    '  const gateway = await ping(site.gateway);',
+    '  const accessPointHealth = devices.filter((device) => {',
+    "    return device.role === 'access-point' && device.signal >= -67;",
+    '  });',
+    '',
+    '  return {',
+    '    site: site.name,',
+    '    gatewayOnline: gateway.ok,',
+    '    totalDevices: devices.length,',
+    '    healthyAccessPoints: accessPointHealth.length,',
+    '    recommendedPolicy: bandwidthProfile,',
+    '  };',
+    '}',
+    '',
+    'const cablePlan = [',
+    "  { from: 'router', to: 'core-switch', cable: 'cat6' },",
+    "  { from: 'core-switch', to: 'ap-lobby', cable: 'cat6-poe' },",
+    "  { from: 'core-switch', to: 'ap-office', cable: 'cat6-poe' },",
+    "  { from: 'floor-switch-01', to: 'cctv-nvr', cable: 'cat6' },",
+    '];',
+    '',
+    'function calculateCoverage(area: CoverageArea) {',
+    '  const apCount = Math.ceil(area.squareMeters / 95);',
+    '  const channelPlan = ["1", "6", "11"].slice(0, apCount);',
+    '',
+    '  return {',
+    '    apCount,',
+    '    channelPlan,',
+    '    mesh: area.hasThickWall,',
+    '    roaming: apCount > 1,',
+    '  };',
+    '}',
+    '',
+    'async function monitorTraffic(site: BusinessSite) {',
+    '  const stream = watchTraffic(site.gateway, { interval: 5000 });',
+    '',
+    '  for await (const sample of stream) {',
+    '    if (sample.latencyMs > 120 || sample.packetLoss > 2) {',
+    '      await notifyNoc({',
+    "        level: 'warning',",
+    "        message: 'Network quality dropped',",
+    '        site: site.name,',
+    '        latency: sample.latencyMs,',
+    '        packetLoss: sample.packetLoss,',
+    '      });',
+    '    }',
+    '  }',
+    '}',
+    '',
+    'const handoverChecklist = [',
+    "  'router-config-backup',",
+    "  'wifi-ssid-documented',",
+    "  'lan-port-map-ready',",
+    "  'bandwidth-policy-active',",
+    "  'monitoring-dashboard-online',",
+    '];',
+    '',
+    'export async function prepareNetworkDeployment(site: BusinessSite) {',
+    '  const audit = await auditNetwork(site);',
+    '  const coverage = calculateCoverage(site.coverage);',
+    '',
+    '  return {',
+    '    scope: solvaraNetworkScope.service,',
+    '    topology,',
+    '    audit,',
+    '    coverage,',
+    '    cablePlan,',
+    '    handoverChecklist,',
+    '  };',
+    '}',
+] as const;
+
+const mobileTeamCodeLines = [
+    "import { useMemo, useState } from 'react';",
+    "import { Pressable, ScrollView, View } from 'react-native';",
+    "import { submitConsultation } from '@/mobile/api/consultation';",
+    "import { useDeviceProfile } from '@/mobile/hooks/use-device-profile';",
+    '',
+    "type MobileService = 'web' | 'mobile' | 'network' | 'server';",
+    "type ScreenKey = 'home' | 'services' | 'project' | 'contact';",
+    '',
+    'const solvaraMobileApp = {',
+    "  name: 'Solvara Studio Mobile',",
+    "  stack: ['React Native', 'TypeScript', 'Laravel API'],",
+    "  theme: { accent: '#a7e33d', surface: '#101511' },",
+    "  screens: ['home', 'services', 'project', 'contact'] as ScreenKey[],",
+    '};',
+    '',
+    'const mobileNavigation = [',
+    "  { key: 'home', label: 'Beranda', priority: 1 },",
+    "  { key: 'services', label: 'Layanan', priority: 2 },",
+    "  { key: 'project', label: 'Project', priority: 3 },",
+    "  { key: 'contact', label: 'Konsultasi', priority: 4 },",
+    '];',
+    '',
+    'function getServiceCopy(service: MobileService) {',
+    '  const copy = {',
+    "    web: 'Landing, dashboard, dan inquiry flow.',",
+    "    mobile: 'App flow, responsive UX, dan screen system.',",
+    "    network: 'WiFi, LAN, monitoring, dan bandwidth.',",
+    "    server: 'Deploy, database, backup, dan hardening.',",
+    '  };',
+    '',
+    '  return copy[service];',
+    '}',
+    '',
+    'function useSolvaraMobileLayout() {',
+    '  const device = useDeviceProfile();',
+    '',
+    '  return useMemo(() => {',
+    '    return {',
+    '      columns: device.width >= 768 ? 2 : 1,',
+    '      bottomNav: device.width < 768,',
+    '      heroHeight: device.width < 390 ? 420 : 520,',
+    '      cardRadius: 18,',
+    '    };',
+    '  }, [device.width]);',
+    '}',
+    '',
+    'function mapProjectCard(project: Project) {',
+    '  return {',
+    '    id: project.id,',
+    '    title: project.name,',
+    '    category: project.category,',
+    '    image: project.cover_image,',
+    '    video: project.video_url,',
+    '    serviceCopy: getServiceCopy(project.category),',
+    '  };',
+    '}',
+    '',
+    'async function sendMobileInquiry(form: MobileInquiryForm) {',
+    '  const payload = {',
+    '    name: form.name.trim(),',
+    '    service: form.service,',
+    '    device: form.deviceLabel,',
+    '    source: "mobile-app-flow",',
+    '    message: form.message,',
+    '  };',
+    '',
+    '  return submitConsultation(payload);',
+    '}',
+    '',
+    'export function SolvaraMobileHome({ projects }: MobileHomeProps) {',
+    '  const layout = useSolvaraMobileLayout();',
+    "  const [activeService, setActiveService] = useState<MobileService>('web');",
+    '',
+    '  const cards = projects.map(mapProjectCard);',
+    '',
+    '  return (',
+    '    <ScrollView showsVerticalScrollIndicator={false}>',
+    '      <HeroCard height={layout.heroHeight} />',
+    '      <ServiceTabs',
+    '        value={activeService}',
+    '        onChange={setActiveService}',
+    '        items={mobileNavigation}',
+    '      />',
+    '      <ProjectGrid columns={layout.columns} projects={cards} />',
+    '      <Pressable onPress={() => sendMobileInquiry({',
+    "        name: 'Client Solvara',",
+    '        service: activeService,',
+    "        deviceLabel: 'mobile-preview',",
+    "        message: 'Saya ingin konsultasi project mobile-ready.',",
+    '      })}>',
+    '        <ConsultationButton label="Konsultasi Mobile" />',
+    '      </Pressable>',
+    '    </ScrollView>',
+    '  );',
+    '}',
+    '',
+    'const mobileQualityGate = [',
+    "  'touch-target-min-44px',",
+    "  'text-readable-small-screen',",
+    "  'image-does-not-cover-copy',",
+    "  'form-submit-state-ready',",
+    "  'android-ios-layout-check',",
+    '];',
+] as const;
 
 type WorkspaceMetric = {
     label: string;
@@ -657,6 +1011,88 @@ const readinessOptions = [
 
 const solutionTabs = [
     {
+        id: 'web',
+        label: 'Web',
+        eyebrow: 'Website & Web App',
+        title: 'Website dan dashboard yang siap dipakai bisnis.',
+        description:
+            'Untuk company profile, landing page, admin panel, dashboard, dan sistem internal yang butuh alur rapi.',
+        icon: Globe2,
+        imageLabel: 'Web interface',
+        imageMetric: 'UI + admin',
+        imageSrc: '/solusi/web.png',
+        imageAlt:
+            'Ilustrasi pembuatan website dan dashboard bisnis Solvara Studio',
+        problems: [
+            'Brand belum terlihat profesional',
+            'Inquiry dan CTA belum rapi',
+            'Project belum mudah dikelola dari admin',
+        ],
+        solutions: [
+            'Struktur halaman dan copy jelas',
+            'UI responsive desktop dan mobile',
+            'Admin panel dan CRUD project',
+            'Deploy production dan basic SEO',
+        ],
+        packages: [
+            {
+                name: 'Landing Website',
+                points: ['Hero, service, portfolio', 'CTA dan form inquiry'],
+            },
+            {
+                name: 'Company System',
+                points: [
+                    'Company profile',
+                    'Halaman layanan',
+                    'Optimasi responsive',
+                ],
+            },
+            {
+                name: 'Admin Dashboard',
+                points: ['Login admin', 'CRUD project', 'Upload media'],
+            },
+        ],
+    },
+    {
+        id: 'mobile',
+        label: 'Mobile',
+        eyebrow: 'Mobile Experience & App',
+        title: 'Mobile experience yang cepat dan enak digunakan.',
+        description:
+            'Untuk mobile-first website, PWA, prototype app, dan integrasi API agar flow pengguna lebih ringan.',
+        icon: Smartphone,
+        imageLabel: 'Mobile flow',
+        imageMetric: 'PWA / app',
+        imageSrc: '/solusi/mobile.png',
+        imageAlt:
+            'Ilustrasi mobile experience dan aplikasi bisnis Solvara Studio',
+        problems: [
+            'Tampilan mobile belum nyaman',
+            'Flow pengguna terlalu panjang',
+            'Aplikasi belum siap integrasi API',
+        ],
+        solutions: [
+            'Desain UI mobile-first',
+            'PWA, React Native, atau Flutter scope',
+            'Integrasi API dan autentikasi',
+            'Testing device dan performa',
+        ],
+        packages: [
+            {
+                name: 'Mobile Web',
+                points: ['Responsive audit', 'CTA dan form mobile'],
+            },
+            {
+                name: 'PWA Ready',
+                points: ['Installable app', 'Offline-ready scope', 'Push plan'],
+            },
+            {
+                name: 'App Prototype',
+                points: ['User flow', 'API integration', 'Testing device'],
+            },
+        ],
+    },
+    {
         id: 'network',
         label: 'Network',
         eyebrow: 'Jasa Setup Jaringan Kantor & Bisnis',
@@ -666,6 +1102,9 @@ const solutionTabs = [
         icon: Router,
         imageLabel: 'Network control',
         imageMetric: '10-100+ device',
+        imageSrc: '/solusi/network.png',
+        imageAlt:
+            'Ilustrasi teknisi menyiapkan jaringan WiFi dan LAN untuk bisnis',
         problems: [
             'Internet lambat saat banyak pengguna',
             'WiFi tidak merata',
@@ -706,6 +1145,9 @@ const solutionTabs = [
         icon: ServerCog,
         imageLabel: 'Server operations',
         imageMetric: 'Backup + monitor',
+        imageSrc: '/solusi/server.png',
+        imageAlt:
+            'Ilustrasi engineer mengelola server, cloud, dan database bisnis',
         problems: [
             'Deploy aplikasi belum rapi',
             'Database dan file belum punya backup',
@@ -750,6 +1192,9 @@ const solutionTabs = [
         icon: Cctv,
         imageLabel: 'Security system',
         imageMetric: 'Remote view',
+        imageSrc: '/solusi/cctv.png',
+        imageAlt:
+            'Ilustrasi teknisi memasang CCTV dan sistem monitoring keamanan',
         problems: [
             'Area penting belum terpantau',
             'Akses rekaman sulit dicek',
@@ -790,6 +1235,9 @@ const solutionTabs = [
         icon: RadioTower,
         imageLabel: 'ISP backbone',
         imageMetric: 'BGP / OSPF',
+        imageSrc: '/solusi/isp.png',
+        imageAlt:
+            'Ilustrasi engineer mengawasi jaringan ISP, backbone, dan monitoring NOC',
         problems: [
             'Routing dan traffic belum terkendali',
             'Monitoring belum terpusat',
@@ -923,28 +1371,35 @@ type ContactFormValues = z.input<typeof contactSchema>;
 
 export default function Welcome() {
     const { resolvedAppearance, updateAppearance } = useAppearance();
+    const { language, t } = useTranslator();
     const isLightMode = resolvedAppearance === 'light';
     const toggleAppearance = () =>
         updateAppearance(isLightMode ? 'dark' : 'light');
 
     return (
         <>
-            <Head title={META.title}>
+            <Head title={t(META.title)}>
                 <meta
                     head-key="description"
                     name="description"
-                    content={META.description}
+                    content={t(META.description)}
                 />
                 <link rel="canonical" href={META.url} />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={META.url} />
-                <meta property="og:title" content={META.title} />
-                <meta property="og:description" content={META.description} />
+                <meta property="og:title" content={t(META.title)} />
+                <meta property="og:description" content={t(META.description)} />
                 <meta property="og:image" content={META.image} />
-                <meta property="og:locale" content="id_ID" />
+                <meta
+                    property="og:locale"
+                    content={language === 'id' ? 'id_ID' : 'en_US'}
+                />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content={META.title} />
-                <meta name="twitter:description" content={META.description} />
+                <meta name="twitter:title" content={t(META.title)} />
+                <meta
+                    name="twitter:description"
+                    content={t(META.description)}
+                />
                 <meta name="twitter:image" content={META.image} />
                 <meta
                     name="theme-color"
@@ -1007,23 +1462,27 @@ function LandingThemeToggle({
     onToggle: () => void;
 }) {
     const Icon = isLightMode ? Moon : Sun;
+    const { t } = useTranslator();
 
     return (
         <button
             type="button"
             onClick={onToggle}
             aria-label={
-                isLightMode ? 'Aktifkan mode gelap' : 'Aktifkan mode terang'
+                isLightMode
+                    ? t('Aktifkan mode gelap')
+                    : t('Aktifkan mode terang')
             }
             className={cn(
-                'fixed right-5 bottom-5 z-50 inline-flex size-13 items-center justify-center rounded-full border border-white/30 bg-white/25 text-white shadow-[0_18px_60px_rgba(0,0,0,0.32)] backdrop-blur-2xl transition hover:scale-105 hover:bg-white/35 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/60 focus-visible:outline-none sm:right-7 sm:bottom-7',
-                isLightMode &&
-                    'border-black/12 bg-white/25 text-black shadow-[0_18px_60px_rgba(11,17,16,0.18)] hover:bg-white/35',
+                'fixed right-5 bottom-5 z-50 inline-flex size-13 items-center justify-center rounded-full border backdrop-blur-2xl transition hover:scale-105 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/60 focus-visible:outline-none sm:right-7 sm:bottom-7',
+                isLightMode
+                    ? 'border-black/12 bg-white text-black shadow-[0_18px_60px_rgba(11,17,16,0.18)] hover:bg-white/92'
+                    : 'border-[#a7e33d]/55 bg-[#a7e33d] text-black shadow-[0_18px_60px_rgba(167,227,61,0.34)] ring-1 ring-black/12 hover:bg-[#b8ef55]',
             )}
         >
             <Icon className="size-5" strokeWidth={2.2} aria-hidden />
             <span className="sr-only">
-                {isLightMode ? 'Mode gelap' : 'Mode terang'}
+                {isLightMode ? t('Mode gelap') : t('Mode terang')}
             </span>
         </button>
     );
@@ -1032,6 +1491,7 @@ function LandingThemeToggle({
 function TopNavigation() {
     const [open, setOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { t } = useTranslator();
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 12);
@@ -1051,10 +1511,10 @@ function TopNavigation() {
     }, [open]);
 
     return (
-        <header className="pointer-events-none fixed top-4 right-4 left-4 z-50 sm:right-auto sm:left-1/2 sm:w-[min(940px,calc(100%-32px))] sm:-translate-x-1/2 2xl:top-6 2xl:w-[min(1310px,calc(100%-96px))]">
+        <header className="pointer-events-none fixed top-3 right-3 left-3 z-50 sm:top-4 sm:right-auto sm:left-1/2 sm:w-[min(940px,calc(100%-32px))] sm:-translate-x-1/2 2xl:top-6 2xl:w-[min(1310px,calc(100%-96px))]">
             <div
                 className={cn(
-                    'solvara-top-nav pointer-events-auto flex h-14.5 w-full items-center justify-between rounded-full border px-4 text-white shadow-[0_18px_60px_-28px_rgba(167,227,61,0.7)] ring-1 ring-black/15 backdrop-blur-xl transition sm:h-18 sm:px-7 2xl:h-25 2xl:px-10',
+                    'solvara-top-nav pointer-events-auto flex h-13.5 w-full items-center justify-between rounded-full border px-3 text-white shadow-[0_18px_60px_-28px_rgba(167,227,61,0.7)] ring-1 ring-black/15 backdrop-blur-xl transition sm:h-18 sm:px-7 2xl:h-25 2xl:px-10',
                     scrolled
                         ? 'border-white/15 bg-black/96'
                         : 'border-white/12 bg-black/92',
@@ -1062,26 +1522,23 @@ function TopNavigation() {
             >
                 <a
                     href="#top"
-                    className="inline-flex items-center gap-3 rounded-full focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                    className="inline-flex min-w-0 items-center gap-2.5 rounded-full focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none sm:gap-3"
                     aria-label="Solvara Studio"
                     onClick={() => setOpen(false)}
                 >
-                    <span
+                    <img
+                        src={BRAND_LOGO_SRC}
+                        alt=""
+                        className="size-7.5 object-contain sm:size-9 2xl:size-13"
                         aria-hidden
-                        className="solvara-top-nav-logo relative inline-flex size-6 items-center justify-center rounded-full bg-white text-black sm:size-7 2xl:size-10"
-                    >
-                        <span className="font-display text-[15px] leading-none italic 2xl:text-[23px]">
-                            S
-                        </span>
-                        <span className="solvara-top-nav-logo-dot absolute -right-0.5 -bottom-0.5 size-1.5 rounded-full bg-gold 2xl:size-2" />
-                    </span>
-                    <span className="text-[15px] font-semibold sm:text-[18px] 2xl:text-[28px]">
+                    />
+                    <span className="truncate text-[14px] font-semibold sm:text-[18px] 2xl:text-[28px]">
                         Solvara Studio
                     </span>
                 </a>
 
                 <nav
-                    aria-label="Navigasi utama"
+                    aria-label={t('Navigasi utama')}
                     className="hidden items-center gap-6 lg:flex 2xl:gap-12"
                 >
                     {navItems.map((item) => (
@@ -1090,7 +1547,7 @@ function TopNavigation() {
                             href={item.href}
                             className="solvara-top-nav-link inline-flex items-center gap-1 rounded-full text-[13px] text-white/70 transition hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none 2xl:text-[20px]"
                         >
-                            {item.label}
+                            {t(item.label)}
                             {item.hasDropdown && (
                                 <ChevronDown
                                     className="size-3.5 2xl:size-5"
@@ -1102,12 +1559,18 @@ function TopNavigation() {
                 </nav>
 
                 <div className="flex items-center gap-2 2xl:gap-5">
+                    <LanguageToggle
+                        tone="adaptive"
+                        className="hidden sm:inline-flex"
+                    />
                     <a
                         href="#contact"
                         className="solvara-top-nav-cta group hidden h-10 overflow-hidden rounded-xl bg-[#a7e33d] text-[13px] font-semibold text-black transition hover:bg-[#97d22e] focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none sm:h-11 lg:inline-flex 2xl:h-14 2xl:rounded-2xl 2xl:text-[17px]"
                     >
                         <span className="solvara-top-nav-cta-label flex h-full items-center rounded-xl bg-white px-5 2xl:rounded-2xl 2xl:px-7">
-                            <LetterSwap3D>Konsultasi Gratis</LetterSwap3D>
+                            <LetterSwap3D>
+                                {t('Konsultasi Gratis')}
+                            </LetterSwap3D>
                         </span>
                         <span className="solvara-top-nav-cta-icon inline-flex h-full w-11 items-center justify-center 2xl:w-14">
                             <ArrowDownRight
@@ -1119,12 +1582,14 @@ function TopNavigation() {
                     <button
                         type="button"
                         aria-label={
-                            open ? 'Tutup menu navigasi' : 'Buka menu navigasi'
+                            open
+                                ? t('Tutup menu navigasi')
+                                : t('Buka menu navigasi')
                         }
                         aria-expanded={open}
                         aria-controls="mobile-nav"
                         onClick={() => setOpen((value) => !value)}
-                        className="solvara-top-nav-mobile-button inline-flex size-10 items-center justify-center rounded-full border border-white/15 bg-white/8 text-white transition hover:bg-white/14 focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:outline-none lg:hidden"
+                        className="solvara-top-nav-mobile-button inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/8 text-white transition hover:bg-white/14 focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:outline-none lg:hidden"
                     >
                         {open ? (
                             <X className="size-4" aria-hidden />
@@ -1139,7 +1604,7 @@ function TopNavigation() {
                 {open && (
                     <motion.nav
                         id="mobile-nav"
-                        aria-label="Navigasi mobile"
+                        aria-label={t('Navigasi mobile')}
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -8 }}
@@ -1153,7 +1618,7 @@ function TopNavigation() {
                                 onClick={() => setOpen(false)}
                                 className="solvara-mobile-nav-link flex items-center justify-between rounded-2xl px-4 py-3 text-[14px] text-white/76 transition hover:bg-white/8 hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
                             >
-                                {item.label}
+                                {t(item.label)}
                                 <ArrowDownRight
                                     className="size-4 text-[#a7e33d]"
                                     aria-hidden
@@ -1165,9 +1630,17 @@ function TopNavigation() {
                             onClick={() => setOpen(false)}
                             className="solvara-mobile-nav-cta group mt-1 flex items-center justify-between rounded-2xl bg-[#a7e33d] px-4 py-3 text-[14px] font-semibold text-black focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
                         >
-                            <LetterSwap3D>Konsultasi Gratis</LetterSwap3D>
+                            <LetterSwap3D>
+                                {t('Konsultasi Gratis')}
+                            </LetterSwap3D>
                             <ArrowDownRight className="size-4" aria-hidden />
                         </a>
+                        <div className="mt-2 px-1 sm:hidden">
+                            <LanguageToggle
+                                tone="adaptive"
+                                className="w-full justify-between"
+                            />
+                        </div>
                     </motion.nav>
                 )}
             </AnimatePresence>
@@ -1176,10 +1649,12 @@ function TopNavigation() {
 }
 
 function Hero() {
+    const { t } = useTranslator();
+
     return (
         <section
             id="top"
-            className="relative isolate min-h-[calc(100svh-16px)] w-full overflow-hidden rounded-[28px] bg-white sm:rounded-4xl 2xl:rounded-[44px]"
+            className="relative isolate min-h-[calc(100svh-16px)] w-full overflow-hidden rounded-[24px] bg-white sm:rounded-4xl 2xl:rounded-[44px]"
         >
             <img
                 src="/landing/solvara-hero-texture.png"
@@ -1190,7 +1665,7 @@ function Hero() {
             <div className="absolute inset-x-0 top-0 h-52 bg-linear-to-b from-white/92 via-white/54 to-white/0" />
             <div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-62.5 mx-auto h-82.5 max-w-245 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.62)_42%,rgba(255,255,255,0)_74%)] blur-2xl 2xl:top-90 2xl:h-107.5 2xl:max-w-315"
+                className="pointer-events-none absolute inset-x-0 top-44 mx-auto h-64 max-w-245 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.62)_42%,rgba(255,255,255,0)_74%)] blur-2xl sm:top-56 sm:h-82.5 2xl:top-90 2xl:h-107.5 2xl:max-w-315"
             />
             <div className="absolute inset-x-0 bottom-0 h-80 bg-linear-to-t from-[#d1dc47]/72 via-[#d1dc47]/22 to-transparent" />
             <div className="absolute inset-x-0 top-42 hidden h-px bg-black/8 md:block" />
@@ -1199,37 +1674,38 @@ function Hero() {
                 className="solvara-scanline pointer-events-none absolute top-47.5 left-[-30%] hidden h-px w-[60%] md:block"
             />
 
-            <div className="relative z-10 mx-auto flex min-h-[calc(100svh-16px)] w-full max-w-7xl flex-col items-center px-5 pt-55 pb-107.5 text-center sm:px-8 lg:pt-55 lg:pb-117.5 2xl:max-w-385 2xl:pt-80 2xl:pb-150">
-                <Reveal className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/72 px-4 py-2 text-[13px] font-medium shadow-sm backdrop-blur 2xl:gap-3 2xl:px-6 2xl:py-3 2xl:text-[18px]">
+            <div className="relative z-10 mx-auto flex min-h-[calc(100svh-16px)] w-full max-w-7xl flex-col items-center px-4 pt-34 pb-12 text-center sm:px-8 sm:pt-42 sm:pb-20 lg:pt-55 lg:pb-117.5 2xl:max-w-385 2xl:pt-80 2xl:pb-150">
+                <Reveal className="inline-flex max-w-full items-center gap-2 rounded-full border border-black/10 bg-white/72 px-3.5 py-2 text-[12px] leading-5 font-medium shadow-sm backdrop-blur sm:px-4 sm:text-[13px] 2xl:gap-3 2xl:px-6 2xl:py-3 2xl:text-[18px]">
                     <Sparkles
                         className="size-4 text-[#94c91b] 2xl:size-5"
                         aria-hidden
                     />
-                    Web, mobile, network, server, CCTV, dan ISP-ready support
+                    {t(
+                        'Web, mobile, network, server, CCTV, dan ISP-ready support',
+                    )}
                 </Reveal>
 
                 <HeroHeadline />
 
                 <Reveal delay={0.16}>
-                    <p className="mt-7 w-full max-w-180 text-[16px] leading-7 font-medium text-black/78 [text-shadow:0_1px_24px_rgba(255,255,255,0.95)] sm:text-[18px] 2xl:mt-12 2xl:max-w-245 2xl:text-[25px] 2xl:leading-9">
-                        Dari setup WiFi cafe & kantor hingga infrastruktur
-                        server dan jaringan skala corporate & ISP, kami bantu
-                        bisnis Anda berjalan lebih stabil, aman, dan siap
-                        berkembang.
+                    <p className="mt-5 w-full max-w-180 text-[15px] leading-7 font-medium text-black/78 [text-shadow:0_1px_24px_rgba(255,255,255,0.95)] sm:mt-7 sm:text-[18px] 2xl:mt-12 2xl:max-w-245 2xl:text-[25px] 2xl:leading-9">
+                        {t(
+                            'Dari setup WiFi cafe & kantor hingga infrastruktur server dan jaringan skala corporate & ISP, kami bantu bisnis Anda berjalan lebih stabil, aman, dan siap berkembang.',
+                        )}
                     </p>
                 </Reveal>
 
                 <Reveal
                     delay={0.24}
-                    className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row"
+                    className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center"
                 >
                     <a
                         href="#contact"
-                        className="group inline-flex h-12 w-full max-w-67.5 items-stretch justify-center overflow-hidden rounded-xl bg-[#a7e33d] text-[14px] font-semibold text-black transition hover:bg-[#97d22e] focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:outline-none sm:w-auto sm:max-w-none 2xl:h-16 2xl:rounded-2xl 2xl:text-[20px]"
+                        className="group inline-flex h-12 w-full max-w-full items-stretch justify-center overflow-hidden rounded-xl bg-[#a7e33d] text-[14px] font-semibold text-black transition hover:bg-[#97d22e] focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:outline-none sm:w-auto sm:max-w-none 2xl:h-16 2xl:rounded-2xl 2xl:text-[20px]"
                     >
                         <span className="flex h-full min-w-0 flex-1 items-center justify-center rounded-xl bg-black px-5 text-white sm:flex-none sm:px-6 2xl:rounded-2xl 2xl:px-9">
                             <LetterSwap3D>
-                                Konsultasi Gratis Sekarang
+                                {t('Konsultasi Gratis Sekarang')}
                             </LetterSwap3D>
                         </span>
                         <span className="inline-flex h-full w-12 flex-none items-center justify-center 2xl:w-16">
@@ -1243,27 +1719,27 @@ function Hero() {
                         href={WHATSAPP_URL}
                         target="_blank"
                         rel="noreferrer"
-                        className="group inline-flex h-12 w-full max-w-55 items-center justify-center rounded-xl border border-black/12 bg-white/64 px-5 text-[14px] font-semibold whitespace-nowrap text-black transition hover:border-black/25 hover:bg-white focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none sm:w-auto sm:max-w-none 2xl:h-16 2xl:rounded-2xl 2xl:px-8 2xl:text-[20px]"
+                        className="group inline-flex h-12 w-full max-w-full items-center justify-center rounded-xl border border-black/12 bg-white/64 px-5 text-[14px] font-semibold text-black transition hover:border-black/25 hover:bg-white focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none sm:w-auto sm:max-w-none 2xl:h-16 2xl:rounded-2xl 2xl:px-8 2xl:text-[20px]"
                     >
-                        <LetterSwap3D>Hubungi via WhatsApp</LetterSwap3D>
+                        <LetterSwap3D>{t('Hubungi via WhatsApp')}</LetterSwap3D>
                     </a>
                 </Reveal>
 
                 <Reveal
                     delay={0.32}
-                    className="mt-7 flex max-w-210 flex-wrap items-center justify-center gap-2 text-[12px] font-semibold text-black/76 [text-shadow:0_1px_20px_rgba(255,255,255,0.95)] 2xl:text-[17px]"
+                    className="mt-6 flex max-w-210 flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-black/76 [text-shadow:0_1px_20px_rgba(255,255,255,0.95)] sm:mt-7 sm:text-[12px] 2xl:text-[17px]"
                 >
                     {heroCapabilities.map((item) => (
                         <span
                             key={item}
                             className="rounded-full border border-black/10 bg-white/58 px-3 py-1.5 shadow-sm backdrop-blur"
                         >
-                            {item}
+                            {t(item)}
                         </span>
                     ))}
                 </Reveal>
 
-                <div className="mt-14 w-full max-w-87.5 lg:hidden">
+                <div className="mt-9 w-full max-w-84 sm:mt-12 sm:max-w-87.5 lg:hidden">
                     <MobileShowcase />
                 </div>
             </div>
@@ -1277,6 +1753,7 @@ function Hero() {
 
 function DashboardShowcase() {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
     const [activeWorkspaceId, setActiveWorkspaceId] =
         useState<WorkspaceView['id']>('development');
     const activeView =
@@ -1315,7 +1792,7 @@ function DashboardShowcase() {
                         }
                         className="mr-1.5 inline-flex size-1.5 rounded-full bg-black/75"
                     />
-                    {activeView.status}
+                    {t(activeView.status)}
                 </div>
             </div>
 
@@ -1327,7 +1804,7 @@ function DashboardShowcase() {
                             className={cn(groupIndex > 0 && 'mt-7 2xl:mt-10')}
                         >
                             <div className="mb-4 text-[10px] text-white/50 2xl:mb-6 2xl:text-[16px]">
-                                {group.label}
+                                {t(group.label)}
                             </div>
                             <div className="space-y-1.5">
                                 {group.items.map((item) => (
@@ -1376,15 +1853,15 @@ function DashboardShowcase() {
                             <div className="mb-6 flex items-center justify-between gap-4">
                                 <div>
                                     <div className="text-[11px] font-semibold text-[#d2ed71] 2xl:text-[18px]">
-                                        {activeView.eyebrow}
+                                        {t(activeView.eyebrow)}
                                     </div>
                                     <div className="mt-1 max-w-xl text-[11px] leading-5 text-white/42 2xl:text-[16px] 2xl:leading-7">
-                                        {activeView.description}
+                                        {t(activeView.description)}
                                     </div>
                                 </div>
                                 <div className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] text-white/55 2xl:px-5 2xl:text-[15px]">
                                     <span className="size-1.5 rounded-full bg-[#a7e33d]" />
-                                    {activeView.tag}
+                                    {t(activeView.tag)}
                                 </div>
                             </div>
 
@@ -1404,9 +1881,9 @@ function DashboardShowcase() {
                             </div>
 
                             <div className="mt-3 flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-[10px] text-white/48 2xl:mt-5 2xl:px-6 2xl:py-4 2xl:text-[15px]">
-                                <span>Decision log</span>
+                                <span>{t('Decision log')}</span>
                                 <span className="text-[#d2ed71]">
-                                    Progress bisa dicek bertahap
+                                    {t('Progress bisa dicek bertahap')}
                                 </span>
                             </div>
                         </motion.div>
@@ -1427,6 +1904,8 @@ function WorkspaceMenuButton({
     isActive: boolean;
     onSelect: () => void;
 }) {
+    const { t } = useTranslator();
+
     return (
         <button
             type="button"
@@ -1445,7 +1924,7 @@ function WorkspaceMenuButton({
                     isActive && 'bg-[#a7e33d] shadow-[0_0_18px_#a7e33d]',
                 )}
             />
-            <span>{item.label}</span>
+            <span>{t(item.label)}</span>
             {isActive && (
                 <motion.span
                     layoutId="workspace-menu-active"
@@ -1465,6 +1944,7 @@ function WorkspaceMetricCard({
     index: number;
 }) {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
         <motion.div
@@ -1487,10 +1967,10 @@ function WorkspaceMetricCard({
         >
             <div className="flex items-center justify-between gap-2">
                 <div className="truncate text-[11px] text-white/42 2xl:text-[17px]">
-                    {metric.label}
+                    {t(metric.label)}
                 </div>
                 <span className="rounded-full border border-white/10 px-2 py-0.5 text-[9px] whitespace-nowrap text-[#d2ed71] 2xl:px-3 2xl:text-[13px]">
-                    {metric.change}
+                    {t(metric.change)}
                 </span>
             </div>
             <AnimatedMetricValue
@@ -1498,7 +1978,7 @@ function WorkspaceMetricCard({
                 className="mt-3 truncate text-[22px] font-semibold text-white 2xl:mt-5 2xl:text-[34px]"
             />
             <div className="mt-2 line-clamp-2 text-[10px] leading-4 text-white/45 2xl:text-[15px] 2xl:leading-6">
-                {metric.caption}
+                {t(metric.caption)}
             </div>
         </motion.div>
     );
@@ -1506,20 +1986,21 @@ function WorkspaceMetricCard({
 
 function WorkspaceTimeline({ activeView }: { activeView: WorkspaceView }) {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
         <section className="relative overflow-hidden rounded-lg border border-white/10 bg-white/4.5 p-4 2xl:p-6">
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <h3 className="text-[13px] font-semibold text-[#d2ed71] 2xl:text-[20px]">
-                        {activeView.title}
+                        {t(activeView.title)}
                     </h3>
                     <p className="mt-1 max-w-lg text-[11px] leading-5 text-white/45 2xl:text-[16px] 2xl:leading-7">
-                        {activeView.description}
+                        {t(activeView.description)}
                     </p>
                 </div>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[9px] font-semibold text-white/48 2xl:text-[13px]">
-                    {activeView.status}
+                    {t(activeView.status)}
                 </span>
             </div>
 
@@ -1548,10 +2029,10 @@ function WorkspaceTimeline({ activeView }: { activeView: WorkspaceView }) {
                             <span className="size-1.5 rounded-full bg-black/70 2xl:size-2" />
                         </span>
                         <div className="truncate text-[10px] font-semibold text-white/72 2xl:text-[15px]">
-                            {step.label}
+                            {t(step.label)}
                         </div>
                         <div className="mt-1 line-clamp-2 text-[9px] leading-4 text-white/38 2xl:text-[13px] 2xl:leading-5">
-                            {step.detail}
+                            {t(step.detail)}
                         </div>
                     </motion.div>
                 ))}
@@ -1590,11 +2071,13 @@ function WorkspaceTimeline({ activeView }: { activeView: WorkspaceView }) {
 }
 
 function WorkspaceChecklist({ activeView }: { activeView: WorkspaceView }) {
+    const { t } = useTranslator();
+
     return (
         <section className="rounded-lg border border-white/10 bg-white/4.5 p-4 2xl:p-6">
             <div className="flex items-center justify-between gap-3">
                 <h3 className="text-[13px] font-semibold text-[#d2ed71] 2xl:text-[20px]">
-                    Working notes
+                    {t('Working notes')}
                 </h3>
                 <span className="font-mono text-[10px] text-white/30 2xl:text-[14px]">
                     {activeView.id}
@@ -1614,13 +2097,14 @@ function WorkspaceChecklist({ activeView }: { activeView: WorkspaceView }) {
                         className="flex gap-2.5 text-[10px] leading-5 text-white/58 2xl:text-[15px] 2xl:leading-7"
                     >
                         <Check className="mt-0.5 size-3.5 shrink-0 text-[#a7e33d] 2xl:size-5" />
-                        <span>{item}</span>
+                        <span>{t(item)}</span>
                     </motion.div>
                 ))}
             </div>
             <div className="mt-6 rounded-md border border-[#a7e33d]/18 bg-[#a7e33d]/8 p-3 text-[10px] leading-5 text-[#d2ed71] 2xl:mt-8 2xl:p-4 2xl:text-[15px] 2xl:leading-7">
-                Tidak semua project perlu sistem besar. Yang penting scope,
-                flow, dan handover-nya jelas sejak awal.
+                {t(
+                    'Tidak semua project perlu sistem besar. Yang penting scope, flow, dan handover-nya jelas sejak awal.',
+                )}
             </div>
         </section>
     );
@@ -1628,6 +2112,7 @@ function WorkspaceChecklist({ activeView }: { activeView: WorkspaceView }) {
 
 function MobileShowcase() {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
         <motion.div
@@ -1651,7 +2136,7 @@ function MobileShowcase() {
             <div className="p-4">
                 <div className="flex items-center gap-2 text-[13px] text-white/50">
                     <LayoutDashboard className="size-4" aria-hidden />
-                    Launch board
+                    {t('Launch board')}
                 </div>
                 <div className="mt-3 text-[28px] leading-[1.14] font-semibold">
                     IT + network readiness
@@ -1664,7 +2149,7 @@ function MobileShowcase() {
                             className="min-w-0 rounded-lg border border-white/10 bg-white/6 p-3"
                         >
                             <div className="truncate text-[11px] text-white/45">
-                                {metric.label}
+                                {t(metric.label)}
                             </div>
                             <AnimatedMetricValue
                                 value={metric.value}
@@ -1677,7 +2162,7 @@ function MobileShowcase() {
                 <div className="mt-3 rounded-lg border border-white/10 bg-white/6 p-3">
                     <div className="flex items-center gap-2 text-[13px] font-semibold">
                         <BarChart3 className="size-4" aria-hidden />
-                        Flow preview
+                        {t('Flow preview')}
                     </div>
                     <div className="mt-5 flex h-24 items-end gap-1.5">
                         {[34, 46, 38, 68, 54, 78, 64, 86].map(
@@ -1721,34 +2206,6 @@ function SocialProofBand() {
 
             <div className="mx-auto max-w-340">
                 <ProjectReadinessPanel />
-            </div>
-
-            <div className="mx-auto mt-8 max-w-340 border-y border-white/10 py-8 lg:mt-10">
-                <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
-                    <Reveal>
-                        <p className="max-w-2xl text-[22px] leading-[1.2] font-semibold tracking-tight sm:text-[34px]">
-                            Satu tim untuk website, mobile experience, jaringan
-                            kantor, server, CCTV, dan infrastruktur bisnis.
-                        </p>
-                    </Reveal>
-                    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[18px] border border-white/10 bg-white/10 md:grid-cols-4 lg:grid-cols-2">
-                        {proofMetrics.map((metric, index) => (
-                            <Reveal
-                                key={metric.label}
-                                delay={index * 0.04}
-                                className="bg-black px-4 py-5"
-                            >
-                                <AnimatedMetricValue
-                                    value={metric.value}
-                                    className="text-[23px] font-semibold text-[#a7e33d]"
-                                />
-                                <div className="mt-1 text-[12px] text-white/50">
-                                    {metric.label}
-                                </div>
-                            </Reveal>
-                        ))}
-                    </div>
-                </div>
             </div>
         </section>
     );
@@ -1795,6 +2252,7 @@ function TechLogoLoopSection() {
 function ProjectReadinessPanel() {
     const [activeIndex, setActiveIndex] = useState(0);
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
     const active = readinessOptions[activeIndex];
 
     return (
@@ -1808,21 +2266,23 @@ function ProjectReadinessPanel() {
                     <div className="bg-[#0b0d0c]/96 p-5 sm:p-7 lg:p-8">
                         <div className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] text-[#a7e33d] uppercase">
                             <ClipboardCheck className="size-4" aria-hidden />
-                            Project readiness
+                            {t('Project readiness')}
                         </div>
                         <h2 className="mt-4 max-w-lg text-[30px] leading-[1.14] font-semibold tracking-tight text-white sm:text-[42px]">
-                            Cek kebutuhan IT sebelum masuk ke scope detail.
+                            {t(
+                                'Cek kebutuhan IT sebelum masuk ke scope detail.',
+                            )}
                         </h2>
                         <p className="mt-5 max-w-md text-[14px] leading-6 text-white/52">
-                            Pilih kebutuhan awal. Panel ini merapikan titik
-                            awal, output, dan jalur kerja untuk web, network,
-                            server, CCTV, atau ISP.
+                            {t(
+                                'Pilih kebutuhan awal. Panel ini merapikan titik awal, output, dan jalur kerja untuk web, network, server, CCTV, atau ISP.',
+                            )}
                         </p>
 
                         <div
                             className="mt-7 grid gap-2 sm:grid-cols-2"
                             role="tablist"
-                            aria-label="Tipe project"
+                            aria-label={t('Tipe project')}
                         >
                             {readinessOptions.map((option, index) => {
                                 const isActive = index === activeIndex;
@@ -1841,7 +2301,7 @@ function ProjectReadinessPanel() {
                                                 : 'border-white/10 bg-white/4 text-white/68 hover:border-white/20 hover:bg-white/7 hover:text-white',
                                         )}
                                     >
-                                        {option.label}
+                                        {t(option.label)}
                                         <ArrowRight
                                             className={cn(
                                                 'size-4 shrink-0 transition group-hover:translate-x-0.5',
@@ -1900,10 +2360,10 @@ function ProjectReadinessPanel() {
                                             aria-hidden
                                         />
                                         <div className="mt-3 text-[11px] text-white/42">
-                                            Estimasi awal
+                                            {t('Estimasi awal')}
                                         </div>
                                         <div className="mt-1 text-[22px] font-semibold text-white">
-                                            {active.estimate}
+                                            {t(active.estimate)}
                                         </div>
                                     </div>
                                     <div className="rounded-[18px] border border-white/10 bg-white/4 p-4">
@@ -1912,7 +2372,7 @@ function ProjectReadinessPanel() {
                                             aria-hidden
                                         />
                                         <div className="mt-3 text-[11px] text-white/42">
-                                            Scope fit
+                                            {t('Scope fit')}
                                         </div>
                                         <div className="mt-1 text-[22px] font-semibold text-white">
                                             {active.score}
@@ -1924,10 +2384,10 @@ function ProjectReadinessPanel() {
                                             aria-hidden
                                         />
                                         <div className="mt-3 text-[11px] text-white/42">
-                                            Route
+                                            {t('Route')}
                                         </div>
                                         <div className="mt-1 text-[22px] font-semibold text-white">
-                                            {active.route.length} step
+                                            {active.route.length} {t('step')}
                                         </div>
                                     </div>
                                 </div>
@@ -1935,23 +2395,23 @@ function ProjectReadinessPanel() {
                                 <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.86fr]">
                                     <div>
                                         <div className="text-[11px] font-semibold tracking-[0.2em] text-white/36 uppercase">
-                                            Fokus awal
+                                            {t('Fokus awal')}
                                         </div>
                                         <p className="mt-3 text-[22px] leading-tight font-semibold tracking-tight text-white sm:text-[28px]">
-                                            {active.intent}
+                                            {t(active.intent)}
                                         </p>
                                         <p className="mt-4 text-[14px] leading-6 text-white/52">
-                                            {active.output}
+                                            {t(active.output)}
                                         </p>
                                     </div>
 
                                     <div className="rounded-[20px] border border-white/10 bg-black/24 p-4">
                                         <div className="flex items-center justify-between gap-3">
                                             <span className="text-[11px] font-semibold tracking-[0.2em] text-white/36 uppercase">
-                                                Scope checkpoint
+                                                {t('Scope checkpoint')}
                                             </span>
                                             <span className="rounded-full bg-[#a7e33d]/12 px-2.5 py-1 text-[10px] font-semibold text-[#d2ed71]">
-                                                Ready to map
+                                                {t('Ready to map')}
                                             </span>
                                         </div>
                                         <ul className="mt-4 space-y-3">
@@ -1966,7 +2426,7 @@ function ProjectReadinessPanel() {
                                                             aria-hidden
                                                         />
                                                     </span>
-                                                    {check}
+                                                    {t(check)}
                                                 </li>
                                             ))}
                                         </ul>
@@ -1985,7 +2445,7 @@ function ProjectReadinessPanel() {
                                                     <span className="h-px flex-1 bg-white/10" />
                                                 </div>
                                                 <div className="mt-3 text-[14px] font-semibold text-white/82">
-                                                    {step}
+                                                    {t(step)}
                                                 </div>
                                             </li>
                                         ))}
@@ -2002,94 +2462,101 @@ function ProjectReadinessPanel() {
 
 function ServicesSection() {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
         <section
             id="services"
-            className="scroll-mt-32 px-5 pt-12 pb-16 text-white sm:px-8 md:pt-16 md:pb-24"
+            className="scroll-mt-32 px-5 pt-10 pb-12 text-white sm:px-8 md:pt-12 md:pb-14"
         >
             <div className="mx-auto max-w-340">
                 <SectionHeader
-                    eyebrow="Services"
-                    title="Web, mobile, network, server, dan security dalam satu scope."
-                    description="Pilih kebutuhan yang paling dekat. Detail teknis tetap dirapikan saat discovery agar solusi tidak berlebihan."
+                    eyebrow={t('Services')}
+                    title={t(
+                        'Web, mobile, network, server, dan security dalam satu scope.',
+                    )}
+                    description={t(
+                        'Pilih kebutuhan yang paling dekat. Detail teknis tetap dirapikan saat discovery agar solusi tidak berlebihan.',
+                    )}
                     titleClassName="max-w-5xl text-balance lg:text-[44px] xl:text-[50px] 2xl:text-[54px]"
                 />
 
-                <div className="mt-8 grid items-stretch gap-4 md:mt-10 md:grid-cols-2 xl:grid-cols-4">
-                    {services.map((service, index) => {
-                        const Icon = service.icon;
+                <div className="mt-8 overflow-hidden rounded-[28px] border border-black/10 bg-[rgba(11,17,16,0.1)] shadow-[0_32px_110px_-78px_rgba(11,17,16,0.62)] md:mt-10 dark:border-white/10 dark:bg-[rgba(255,255,255,0.1)] dark:shadow-[0_32px_120px_-82px_rgba(167,227,61,0.35)]">
+                    <div className="grid items-stretch gap-px md:grid-cols-2 xl:grid-cols-4">
+                        {services.map((service, index) => {
+                            const Icon = service.icon;
 
-                        return (
-                            <Reveal
-                                key={service.id}
-                                delay={index * 0.04}
-                                className="h-full"
-                            >
-                                <motion.a
-                                    href="#contact"
-                                    whileHover={
-                                        reduce
-                                            ? undefined
-                                            : { y: -3, scale: 1.004 }
-                                    }
-                                    transition={{
-                                        duration: 0.35,
-                                        ease: [0.22, 1, 0.36, 1],
-                                    }}
-                                    className="group flex h-full min-h-78 flex-col justify-between rounded-[22px] border border-black/10 bg-white p-5 text-[#101511] shadow-[0_24px_70px_-58px_rgba(16,19,17,0.55)] transition hover:border-[#a7e33d]/65 hover:bg-[#fbfff1] focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none sm:p-6 dark:border-white/10 dark:bg-[#101311] dark:text-[#f5f8f1] dark:hover:border-[#a7e33d]/55 dark:hover:bg-[#141814]"
+                            return (
+                                <Reveal
+                                    key={service.id}
+                                    delay={index * 0.04}
+                                    className="h-full"
                                 >
-                                    <div>
-                                        <div className="flex items-center justify-between gap-4">
-                                            <span
-                                                className={cn(
-                                                    'flex size-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-black',
-                                                    serviceAccents[
-                                                        index %
-                                                            serviceAccents.length
-                                                    ],
-                                                )}
-                                            >
-                                                <Icon
-                                                    className="size-5"
-                                                    aria-hidden
-                                                />
-                                            </span>
-                                            <span className="rounded-full border border-black/10 px-3 py-1 text-[10px] font-semibold tracking-[0.14em] text-black/42 uppercase dark:border-white/12 dark:text-[#c7d0bf]">
-                                                {service.badge}
-                                            </span>
-                                        </div>
-                                        <h3 className="mt-5 min-h-14 text-[21px] leading-[1.18] font-semibold tracking-tight text-[#101511] group-hover:text-[#5f8f12] dark:text-[#f7faf3] dark:group-hover:text-[#d2ed71]">
-                                            {service.title}
-                                        </h3>
-                                        <p className="mt-2 line-clamp-3 text-[13px] leading-6 text-black/58 dark:text-[#b9c2b2]">
-                                            {service.description}
-                                        </p>
-                                        <ul className="mt-4 grid gap-2">
-                                            {service.points.map((point) => (
-                                                <li
-                                                    key={point}
-                                                    className="flex items-center gap-2 text-[12px] leading-5 text-black/56 dark:text-[#c5cebd]"
+                                    <motion.a
+                                        href="#contact"
+                                        whileHover={
+                                            reduce
+                                                ? undefined
+                                                : { y: -3, scale: 1.004 }
+                                        }
+                                        transition={{
+                                            duration: 0.35,
+                                            ease: [0.22, 1, 0.36, 1],
+                                        }}
+                                        className="group flex h-full min-h-0 flex-col justify-between bg-white p-5 text-[#101511] transition hover:bg-[#fbfff1] focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none focus-visible:ring-inset sm:min-h-72 sm:p-6 xl:min-h-78 dark:bg-[#101311] dark:text-[#f5f8f1] dark:hover:bg-[#141814]"
+                                    >
+                                        <div>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span
+                                                    className={cn(
+                                                        'flex size-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-black',
+                                                        serviceAccents[
+                                                            index %
+                                                                serviceAccents.length
+                                                        ],
+                                                    )}
                                                 >
-                                                    <span className="size-1.5 shrink-0 rounded-full bg-[#a7e33d]" />
-                                                    <span className="truncate">
-                                                        {point}
-                                                    </span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4 text-[12px] font-semibold text-black/45 dark:border-white/10 dark:text-[#aeb8aa]">
-                                        <span>Konsultasi scope</span>
-                                        <ArrowUpRight
-                                            className="size-5 shrink-0 text-black/35 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#5f8f12] dark:text-[#9fa99a] dark:group-hover:text-[#a7e33d]"
-                                            aria-hidden
-                                        />
-                                    </div>
-                                </motion.a>
-                            </Reveal>
-                        );
-                    })}
+                                                    <Icon
+                                                        className="size-5"
+                                                        aria-hidden
+                                                    />
+                                                </span>
+                                                <span className="rounded-full border border-black/10 px-3 py-1 text-[10px] font-semibold tracking-[0.14em] text-black/42 uppercase dark:border-white/12 dark:text-[#c7d0bf]">
+                                                    {t(service.badge)}
+                                                </span>
+                                            </div>
+                                            <h3 className="mt-5 text-[21px] leading-[1.18] font-semibold tracking-tight text-[#101511] group-hover:text-[#5f8f12] sm:min-h-14 dark:text-[#f7faf3] dark:group-hover:text-[#d2ed71]">
+                                                {t(service.title)}
+                                            </h3>
+                                            <p className="mt-2 line-clamp-3 text-[13px] leading-6 text-black/58 dark:text-[#b9c2b2]">
+                                                {t(service.description)}
+                                            </p>
+                                            <ul className="mt-4 grid gap-2">
+                                                {service.points.map((point) => (
+                                                    <li
+                                                        key={point}
+                                                        className="flex items-center gap-2 text-[12px] leading-5 text-black/56 dark:text-[#c5cebd]"
+                                                    >
+                                                        <span className="size-1.5 shrink-0 rounded-full bg-[#a7e33d]" />
+                                                        <span className="min-w-0">
+                                                            {t(point)}
+                                                        </span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4 text-[12px] font-semibold text-black/45 dark:border-white/10 dark:text-[#aeb8aa]">
+                                            <span>{t('Konsultasi scope')}</span>
+                                            <ArrowUpRight
+                                                className="size-5 shrink-0 text-black/35 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#5f8f12] dark:text-[#9fa99a] dark:group-hover:text-[#a7e33d]"
+                                                aria-hidden
+                                            />
+                                        </div>
+                                    </motion.a>
+                                </Reveal>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
         </section>
@@ -2098,13 +2565,9 @@ function ServicesSection() {
 
 function SolutionDetailSection() {
     const [activeId, setActiveId] =
-        useState<(typeof solutionTabs)[number]['id']>('network');
-    const [slideDirection, setSlideDirection] = useState(1);
+        useState<(typeof solutionTabs)[number]['id']>('web');
     const reduce = useReducedMotion();
-    const activeIndex = Math.max(
-        0,
-        solutionTabs.findIndex((solution) => solution.id === activeId),
-    );
+    const { t } = useTranslator();
     const active =
         solutionTabs.find((solution) => solution.id === activeId) ??
         solutionTabs[0];
@@ -2114,36 +2577,32 @@ function SolutionDetailSection() {
             return;
         }
 
-        const nextIndex = solutionTabs.findIndex(
-            (solution) => solution.id === solutionId,
-        );
-
-        setSlideDirection(nextIndex > activeIndex ? 1 : -1);
         setActiveId(solutionId);
     };
 
     return (
         <section
             id="solutions"
-            className="relative overflow-hidden px-5 py-16 text-white sm:px-8 md:py-24"
+            className="relative overflow-hidden px-2 py-10 text-white min-[390px]:px-3 sm:px-8 md:py-14"
         >
             <div className="mx-auto max-w-340">
-                <div className="max-w-5xl">
-                    <SectionKicker>Solution detail</SectionKicker>
+                <div className="px-3 min-[390px]:px-2 sm:px-0">
+                    <SectionKicker>{t('Solution detail')}</SectionKicker>
                     <Reveal>
-                        <h2 className="mt-4 max-w-4xl text-[36px] leading-[1.08] font-semibold tracking-tight text-balance sm:text-[52px] lg:text-[64px]">
-                            Network, server, CCTV, dan ISP dibuat rapi dari
-                            awal.
+                        <h2 className="mt-4 max-w-7xl text-[30px] leading-[1.12] font-semibold tracking-tight text-pretty sm:text-[52px] lg:text-[64px]">
+                            {t(
+                                'Web, mobile, network, server, CCTV, dan ISP dibuat rapi dari awal.',
+                            )}
                         </h2>
                     </Reveal>
                 </div>
 
-                <Reveal className="mt-10">
-                    <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0d100f] shadow-[0_34px_120px_-72px_rgba(167,227,61,0.5)]">
+                <Reveal className="mt-8">
+                    <div className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0d100f] shadow-[0_34px_120px_-72px_rgba(167,227,61,0.5)] sm:rounded-[28px]">
                         <div
-                            className="grid gap-px bg-white/10 p-px sm:grid-cols-2 lg:grid-cols-4"
+                            className="grid grid-cols-2 gap-px bg-white/10 p-px sm:grid-cols-3 xl:grid-cols-6"
                             role="tablist"
-                            aria-label="Pilih detail solusi IT"
+                            aria-label={t('Pilih detail solusi IT')}
                         >
                             {solutionTabs.map((solution) => {
                                 const Icon = solution.icon;
@@ -2159,7 +2618,7 @@ function SolutionDetailSection() {
                                             showSolution(solution.id)
                                         }
                                         className={cn(
-                                            'group relative isolate flex min-h-20 items-center justify-between gap-4 overflow-hidden bg-[#101211] px-5 py-4 text-left transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none',
+                                            'group relative isolate flex min-h-15 items-center justify-between gap-2.5 overflow-hidden bg-[#101211] px-3 py-3 text-left transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none min-[390px]:min-h-16 min-[390px]:gap-3 min-[390px]:px-4 sm:min-h-20 sm:gap-4 sm:px-5 sm:py-4',
                                             isActive
                                                 ? 'text-black'
                                                 : 'text-white hover:bg-[#151914]',
@@ -2180,7 +2639,7 @@ function SolutionDetailSection() {
                                         )}
                                         <span
                                             className={cn(
-                                                'relative flex size-10 items-center justify-center rounded-[14px] border transition-colors duration-300',
+                                                'relative flex size-8.5 shrink-0 items-center justify-center rounded-[12px] border transition-colors duration-300 min-[390px]:size-9 sm:size-10 sm:rounded-[14px]',
                                                 isActive
                                                     ? 'border-black/12 bg-black text-[#a7e33d]'
                                                     : 'border-white/10 bg-white/5 text-[#a7e33d]',
@@ -2193,17 +2652,17 @@ function SolutionDetailSection() {
                                         </span>
                                         <span
                                             className={cn(
-                                                'relative min-w-0 flex-1 text-[14px] font-semibold transition-colors duration-300',
+                                                'relative min-w-0 flex-1 text-[12px] leading-5 font-semibold wrap-anywhere transition-colors duration-300 min-[390px]:text-[13px] sm:text-[14px]',
                                                 isActive
                                                     ? 'text-black'
                                                     : 'text-white',
                                             )}
                                         >
-                                            {solution.label}
+                                            {t(solution.label)}
                                         </span>
                                         <span
                                             className={cn(
-                                                'relative h-px w-8 transition-colors duration-300',
+                                                'relative hidden h-px w-6 transition-colors duration-300 2xl:block',
                                                 isActive
                                                     ? 'bg-black/24'
                                                     : 'bg-white/14 group-hover:bg-[#a7e33d]/50',
@@ -2217,13 +2676,12 @@ function SolutionDetailSection() {
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={active.id}
-                                custom={slideDirection}
                                 initial={
                                     reduce
                                         ? false
                                         : {
                                               opacity: 0,
-                                              x: slideDirection * 32,
+                                              y: 14,
                                               filter: 'blur(4px)',
                                           }
                                 }
@@ -2241,81 +2699,81 @@ function SolutionDetailSection() {
                                         ? undefined
                                         : {
                                               opacity: 0,
-                                              x: slideDirection * -24,
+                                              y: -10,
                                               filter: 'blur(3px)',
                                           }
                                 }
                                 transition={{
                                     opacity: { duration: 0.22 },
                                     filter: { duration: 0.28 },
-                                    x: {
+                                    y: {
                                         type: 'spring',
                                         stiffness: 220,
                                         damping: 30,
                                         mass: 0.9,
                                     },
                                 }}
-                                className="grid gap-px bg-white/10 lg:grid-cols-[1.05fr_0.95fr]"
+                                className="grid min-w-0 gap-px overflow-hidden bg-white/10 lg:grid-cols-[1.05fr_0.95fr]"
                             >
-                                <div className="bg-[#0d100f] p-5 sm:p-7 lg:p-9">
-                                    <div className="flex items-center gap-3">
-                                        <span className="flex size-12 items-center justify-center rounded-2xl bg-[#a7e33d] text-black">
+                                <div className="min-w-0 bg-[#0d100f] px-4 py-5 min-[390px]:p-5 sm:p-7 lg:p-9">
+                                    <div className="flex min-w-0 items-center gap-3">
+                                        <span className="flex size-10 shrink-0 items-center justify-center rounded-[14px] bg-[#a7e33d] text-black sm:size-12 sm:rounded-2xl">
                                             <ActiveIcon
-                                                className="size-5"
+                                                className="size-4.5 sm:size-5"
                                                 aria-hidden
                                             />
                                         </span>
                                         <div className="min-w-0">
                                             <p className="text-[11px] font-semibold tracking-[0.18em] text-[#a7e33d] uppercase">
-                                                {active.eyebrow}
+                                                {t(active.eyebrow)}
                                             </p>
                                             <p className="mt-1 text-[12px] text-white/42">
-                                                {active.imageMetric}
+                                                {t(active.imageMetric)}
                                             </p>
                                         </div>
                                     </div>
 
-                                    <h3 className="mt-7 max-w-2xl text-[34px] leading-[1.12] font-semibold tracking-tight text-white sm:text-[46px]">
-                                        {active.title}
+                                    <h3 className="mt-5 max-w-full text-[25px] leading-[1.14] font-semibold tracking-tight text-pretty wrap-anywhere text-white min-[390px]:text-[27px] sm:mt-7 sm:max-w-2xl sm:text-[46px]">
+                                        {t(active.title)}
                                     </h3>
-                                    <p className="mt-5 max-w-xl text-[15px] leading-7 text-white/56">
-                                        {active.description}
+                                    <p className="mt-4 max-w-full text-[14px] leading-7 wrap-anywhere text-white/56 sm:mt-5 sm:max-w-xl sm:text-[15px]">
+                                        {t(active.description)}
                                     </p>
 
-                                    <div className="mt-8 grid gap-4 md:grid-cols-2">
+                                    <div className="mt-6 grid gap-px overflow-hidden rounded-[18px] border border-black/10 bg-black/10 sm:mt-8 sm:rounded-[22px] md:grid-cols-2 dark:border-[#2d342f] dark:bg-[#2d342f]">
                                         <SolutionList
-                                            title="Masalah"
+                                            title={t('Masalah')}
                                             items={active.problems}
                                             tone="muted"
                                         />
                                         <SolutionList
-                                            title="Solusi"
+                                            title={t('Solusi')}
                                             items={active.solutions}
                                             tone="accent"
                                         />
                                     </div>
 
-                                    <div className="mt-8 grid gap-3 md:grid-cols-3">
+                                    <div className="mt-6 grid gap-px overflow-hidden rounded-[18px] border border-black/10 bg-black/10 sm:mt-8 sm:rounded-[22px] md:grid-cols-3 dark:border-[#2d342f] dark:bg-[#2d342f]">
                                         {active.packages.map((plan) => (
                                             <div
                                                 key={plan.name}
-                                                className="rounded-[18px] border border-white/10 bg-white/4 p-4"
+                                                className="min-w-0 bg-white p-4 sm:p-5 dark:bg-[#141814]"
                                             >
-                                                <h4 className="text-[15px] font-semibold text-white">
-                                                    {plan.name}
+                                                <h4 className="text-[15px] leading-snug font-semibold wrap-anywhere text-[#0b1110] dark:text-white">
+                                                    {t(plan.name)}
                                                 </h4>
                                                 <ul className="mt-4 space-y-2">
                                                     {plan.points.map(
                                                         (point) => (
                                                             <li
                                                                 key={point}
-                                                                className="flex gap-2 text-[12px] leading-5 text-white/52"
+                                                                className="flex min-w-0 gap-2 text-[12px] leading-5 wrap-anywhere text-black/56 dark:text-white/52"
                                                             >
                                                                 <Check
                                                                     className="mt-0.5 size-3.5 shrink-0 text-[#a7e33d]"
                                                                     aria-hidden
                                                                 />
-                                                                {point}
+                                                                {t(point)}
                                                             </li>
                                                         ),
                                                     )}
@@ -2325,51 +2783,80 @@ function SolutionDetailSection() {
                                     </div>
                                 </div>
 
-                                <div className="bg-[#101211] p-5 sm:p-7 lg:p-9">
-                                    <div className="relative min-h-120 overflow-hidden rounded-3xl border border-white/10 bg-black">
-                                        <img
-                                            src="/landing/solvara-hero-texture1.png"
-                                            alt=""
-                                            className="absolute inset-0 h-full w-full object-cover opacity-80"
-                                            loading="lazy"
-                                        />
-                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_18%,rgba(167,227,61,0.38),transparent_35%),linear-gradient(135deg,rgba(4,9,7,0.92),rgba(4,9,7,0.48)_48%,rgba(4,9,7,0.84))]" />
-                                        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#a7e33d] to-transparent" />
+                                <div className="min-w-0 bg-white p-4 min-[390px]:p-5 sm:p-7 lg:p-9 dark:bg-[#101211]">
+                                    <div className="overflow-hidden rounded-[22px] border border-black/10 bg-white shadow-[0_28px_110px_-72px_rgba(11,17,16,0.58)] sm:rounded-3xl dark:border-white/10 dark:bg-[#060907] dark:shadow-[0_28px_110px_-72px_rgba(167,227,61,0.5)]">
+                                        <div className="relative aspect-[3/2] min-h-58 overflow-hidden bg-black sm:min-h-80 lg:min-h-100">
+                                            {active.imageSrc ? (
+                                                <motion.img
+                                                    key={active.imageSrc}
+                                                    src={active.imageSrc}
+                                                    alt={t(active.imageAlt)}
+                                                    className="absolute inset-0 h-full w-full object-contain"
+                                                    loading="lazy"
+                                                    initial={
+                                                        reduce
+                                                            ? false
+                                                            : {
+                                                                  opacity: 0,
+                                                              }
+                                                    }
+                                                    animate={
+                                                        reduce
+                                                            ? undefined
+                                                            : {
+                                                                  opacity: 1,
+                                                              }
+                                                    }
+                                                    transition={{
+                                                        opacity: {
+                                                            duration: 0.7,
+                                                            ease: [
+                                                                0.22, 1, 0.36,
+                                                                1,
+                                                            ],
+                                                        },
+                                                        ease: 'easeInOut',
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,rgba(167,227,61,0.18),transparent_34%),linear-gradient(135deg,#101511,#171d18_48%,#0b0f0c)]" />
+                                            )}
+                                            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,5,4,0.02)_0%,rgba(3,5,4,0.1)_62%,rgba(3,5,4,0.34)_100%),radial-gradient(circle_at_20%_14%,rgba(167,227,61,0.18),transparent_34%)]" />
+                                            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-[#a7e33d] to-transparent" />
 
-                                        <div className="relative flex min-h-120 flex-col justify-between p-6">
-                                            <div className="flex items-center justify-between gap-4">
-                                                <div className="rounded-full border border-white/12 bg-white/8 px-3 py-1 text-[11px] font-semibold tracking-[0.16em] text-white/62 uppercase backdrop-blur">
-                                                    {active.imageLabel}
+                                            <div className="absolute inset-x-4 top-4 flex items-center justify-between gap-4 sm:inset-x-7 sm:top-7">
+                                                <div className="rounded-full border border-white/16 bg-black/34 px-3 py-1 text-[11px] font-semibold tracking-[0.16em] text-white/78 uppercase shadow-[0_18px_60px_-36px_rgba(0,0,0,0.9)] backdrop-blur-md">
+                                                    {t(active.imageLabel)}
                                                 </div>
-                                                <span className="flex size-12 items-center justify-center rounded-full bg-[#a7e33d] text-black shadow-[0_0_44px_rgba(167,227,61,0.34)]">
+                                                <span className="hidden size-12 items-center justify-center rounded-full bg-[#a7e33d] text-black shadow-[0_0_44px_rgba(167,227,61,0.34)] sm:flex">
                                                     <ActiveIcon
                                                         className="size-5"
                                                         aria-hidden
                                                     />
                                                 </span>
                                             </div>
+                                        </div>
 
-                                            <div>
-                                                <p className="max-w-xs text-[42px] leading-[1.04] font-semibold tracking-tight text-white">
-                                                    {active.label} ready
-                                                </p>
-                                                <div className="mt-7 grid gap-2">
-                                                    {active.solutions
-                                                        .slice(0, 4)
-                                                        .map((item, index) => (
-                                                            <div
-                                                                key={item}
-                                                                className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/32 px-4 py-3 backdrop-blur"
-                                                            >
-                                                                <span className="text-[13px] text-white/70">
-                                                                    {item}
-                                                                </span>
-                                                                <span className="font-mono text-[11px] text-[#a7e33d]">
-                                                                    0{index + 1}
-                                                                </span>
-                                                            </div>
-                                                        ))}
-                                                </div>
+                                        <div className="border-t border-black/10 bg-[radial-gradient(circle_at_16%_0%,rgba(167,227,61,0.12),transparent_34%),linear-gradient(180deg,#ffffff,#f7faf2)] p-5 sm:p-6 dark:border-white/10 dark:bg-[radial-gradient(circle_at_16%_0%,rgba(167,227,61,0.16),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.045),rgba(255,255,255,0.02))]">
+                                            <p className="text-[26px] leading-[1.08] font-semibold tracking-tight text-[#0b1110] sm:text-[38px] dark:text-white">
+                                                {t(active.label)} {t('ready')}
+                                            </p>
+                                            <div className="mt-5 grid gap-2">
+                                                {active.solutions
+                                                    .slice(0, 3)
+                                                    .map((item, index) => (
+                                                        <div
+                                                            key={item}
+                                                            className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 bg-white px-4 py-3 shadow-[0_16px_60px_-48px_rgba(11,17,16,0.55)] dark:border-white/12 dark:bg-neutral-950/28 dark:shadow-[0_16px_60px_-42px_rgba(0,0,0,0.9)]"
+                                                        >
+                                                            <span className="text-[13px] text-black/68 dark:text-white/78">
+                                                                {t(item)}
+                                                            </span>
+                                                            <span className="font-mono text-[11px] text-[#a7e33d]">
+                                                                0{index + 1}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                             </div>
                                         </div>
                                     </div>
@@ -2394,10 +2881,10 @@ function SolutionDetailSection() {
                                     aria-hidden
                                 />
                                 <h3 className="mt-5 text-[21px] leading-tight font-semibold tracking-tight">
-                                    {item.title}
+                                    {t(item.title)}
                                 </h3>
                                 <p className="mt-3 text-[14px] leading-6 text-white/52">
-                                    {item.detail}
+                                    {t(item.detail)}
                                 </p>
                             </Reveal>
                         );
@@ -2417,26 +2904,28 @@ function SolutionList({
     items: readonly string[];
     tone: 'muted' | 'accent';
 }) {
+    const { t } = useTranslator();
+
     return (
-        <div className="rounded-[20px] border border-white/10 bg-white/4 p-5">
-            <p className="text-[11px] font-semibold tracking-[0.18em] text-white/34 uppercase">
-                {title}
+        <div className="min-w-0 bg-white p-4 sm:p-5 dark:bg-[#141814]">
+            <p className="text-[11px] font-semibold tracking-[0.18em] text-black/34 uppercase dark:text-white/34">
+                {t(title)}
             </p>
             <ul className="mt-4 space-y-3">
                 {items.map((item) => (
                     <li
                         key={item}
-                        className="flex items-start gap-3 text-[13px] leading-6 text-white/62"
+                        className="flex min-w-0 items-start gap-3 text-[13px] leading-6 wrap-anywhere text-black/62 dark:text-white/62"
                     >
                         <span
                             className={cn(
                                 'mt-2 size-1.5 rounded-full',
                                 tone === 'accent'
                                     ? 'bg-[#a7e33d]'
-                                    : 'bg-white/30',
+                                    : 'bg-black/30 dark:bg-white/30',
                             )}
                         />
-                        {item}
+                        {t(item)}
                     </li>
                 ))}
             </ul>
@@ -2445,31 +2934,35 @@ function SolutionList({
 }
 
 function ProcessSection() {
+    const { t } = useTranslator();
+
     return (
         <section
             id="process"
-            className="px-5 py-16 text-white sm:px-8 md:py-24"
+            className="px-5 py-10 text-white sm:px-8 md:py-14"
         >
             <div className="mx-auto grid max-w-340 gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
                 <div className="lg:sticky lg:top-36 lg:self-start">
-                    <SectionKicker>Process</SectionKicker>
+                    <SectionKicker>{t('Process')}</SectionKicker>
                     <Reveal>
-                        <h2 className="mt-4 max-w-xl text-[42px] leading-[1.14] font-semibold tracking-tight text-balance sm:text-[64px]">
-                            Cara kerja jelas dari survey sampai support.
+                        <h2 className="mt-4 max-w-xl text-[36px] leading-[1.14] font-semibold tracking-tight text-balance sm:text-[64px]">
+                            {t('Cara kerja jelas dari survey sampai support.')}
                         </h2>
                     </Reveal>
                     <Reveal delay={0.08}>
                         <p className="mt-6 max-w-sm text-[15px] leading-7 text-white/55">
-                            Kebutuhan dipetakan, instalasi atau development
-                            berjalan bertahap, lalu ditutup dengan QA dan
-                            handover.
+                            {t(
+                                'Kebutuhan dipetakan, instalasi atau development berjalan bertahap, lalu ditutup dengan QA dan handover.',
+                            )}
                         </p>
                     </Reveal>
                     <a
                         href="#contact"
                         className="group mt-8 inline-flex h-12 w-fit items-center justify-center self-start rounded-xl bg-white px-7 text-[14px] font-semibold text-black transition hover:bg-[#d2ed71] focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:outline-none"
                     >
-                        <LetterSwap3D>Diskusi kebutuhan awal</LetterSwap3D>
+                        <LetterSwap3D>
+                            {t('Diskusi kebutuhan awal')}
+                        </LetterSwap3D>
                     </a>
                 </div>
 
@@ -2536,6 +3029,7 @@ function ProcessTimelineStep({
 }) {
     const reduce = useReducedMotion();
     const { resolvedAppearance } = useAppearance();
+    const { t } = useTranslator();
     const isLightMode = resolvedAppearance === 'light';
     const Icon = processIcons[index] ?? Sparkles;
     const inactiveIconBackground = isLightMode ? '#f9fbf2' : '#0c0f0d';
@@ -2589,7 +3083,7 @@ function ProcessTimelineStep({
     );
 
     return (
-        <li className="relative grid min-h-32 grid-cols-[48px_minmax(0,1fr)] gap-x-5 py-4 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-x-7 sm:py-5 lg:min-h-28 lg:grid-cols-[72px_220px_minmax(260px,1fr)] lg:gap-x-7 lg:py-4">
+        <li className="relative grid min-h-28 grid-cols-[44px_minmax(0,1fr)] gap-x-4 py-4 sm:min-h-32 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-x-7 sm:py-5 lg:min-h-28 lg:grid-cols-[72px_220px_minmax(260px,1fr)] lg:gap-x-7 lg:py-4">
             {!isLast && (
                 <span
                     className="pointer-events-none absolute right-0 bottom-0 left-17 h-px bg-white/10 sm:left-23 lg:left-31.75"
@@ -2597,7 +3091,7 @@ function ProcessTimelineStep({
                 />
             )}
 
-            <div className="relative col-start-1 row-span-2 flex min-h-24 items-center justify-center lg:col-start-1 lg:row-span-1 lg:min-h-20">
+            <div className="relative col-start-1 row-span-2 flex min-h-20 items-center justify-center sm:min-h-24 lg:col-start-1 lg:row-span-1 lg:min-h-20">
                 <motion.span
                     style={
                         reduce || isFirst
@@ -2614,14 +3108,16 @@ function ProcessTimelineStep({
                                   color: iconColor,
                               }
                     }
-                    className="relative z-10 flex size-11 items-center justify-center rounded-full border text-white/70 sm:size-14"
+                    className="relative z-10 flex size-10 items-center justify-center rounded-full border text-white/70 sm:size-14"
                 >
                     <Icon
                         className="size-4 sm:size-5"
                         strokeWidth={2.2}
                         aria-hidden
                     />
-                    <span className="sr-only">Step {step.number}</span>
+                    <span className="sr-only">
+                        {t('Step')} {step.number}
+                    </span>
                 </motion.span>
             </div>
 
@@ -2639,8 +3135,8 @@ function ProcessTimelineStep({
                 >
                     {step.number}
                 </motion.span>
-                <h3 className="mt-2 text-[28px] leading-tight font-semibold sm:text-[34px]">
-                    {step.title}
+                <h3 className="mt-2 text-[24px] leading-tight font-semibold sm:text-[34px]">
+                    {t(step.title)}
                 </h3>
             </Reveal>
 
@@ -2649,7 +3145,7 @@ function ProcessTimelineStep({
                 className="col-start-2 row-start-2 mt-4 self-center lg:col-start-3 lg:row-start-1 lg:mt-0"
             >
                 <p className="max-w-xl text-[15px] leading-7 text-white/58">
-                    {step.description}
+                    {t(step.description)}
                 </p>
             </Reveal>
         </li>
@@ -2663,6 +3159,7 @@ function TeamSection() {
     );
     const [activeMember, setActiveMember] = useState(defaultTeamMember);
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
     const member = teamMembers[activeMember] ?? teamMembers[0];
     const memberIndexLabel = String(activeMember + 1).padStart(2, '0');
     const memberCountLabel = String(teamMembers.length).padStart(2, '0');
@@ -2680,20 +3177,28 @@ function TeamSection() {
     return (
         <section
             id="team"
-            className="relative overflow-hidden px-5 py-16 text-white sm:px-8 md:py-24"
+            className="relative overflow-hidden px-5 py-10 text-white sm:px-8 md:py-14"
         >
             <div className="mx-auto max-w-340">
                 <div>
                     <div>
-                        <SectionKicker>Team</SectionKicker>
+                        <SectionKicker>{t('Team')}</SectionKicker>
                         <SplitHeading
-                            text="Tim yang terlibat di Solvara Studio"
-                            className="mt-4 max-w-none text-[36px] leading-[1.14] font-semibold tracking-tight text-balance sm:text-[52px] lg:text-[56px] lg:text-nowrap xl:text-[60px] 2xl:text-[64px]"
+                            text={t('Tim yang terlibat di Solvara Studio')}
+                            className="mt-4 max-w-none text-[32px] leading-[1.14] font-semibold tracking-tight text-balance sm:text-[52px] lg:text-[56px] lg:text-nowrap xl:text-[60px] 2xl:text-[64px]"
                         />
                     </div>
                 </div>
 
-                <Reveal className="mt-10">
+                <MobileTeamCard
+                    member={member}
+                    activeMember={activeMember}
+                    onSelect={goToMember}
+                    onPrevious={goToPrevious}
+                    onNext={goToNext}
+                />
+
+                <Reveal className="mt-8 hidden lg:block">
                     <div
                         className="relative overflow-hidden rounded-3xl border border-black/10 bg-[#a7e33d] text-black shadow-[0_34px_120px_-58px_rgba(65,86,12,0.55)]"
                         style={
@@ -2710,7 +3215,11 @@ function TeamSection() {
                             aria-hidden
                             className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.2),transparent_34%,rgba(0,0,0,0.055)_74%,transparent)]"
                         />
-                        <div className="relative p-5 sm:p-7 lg:p-10">
+                        <TeamCodeBackdrop
+                            member={member}
+                            reduce={Boolean(reduce)}
+                        />
+                        <div className="relative z-10 p-5 sm:p-7 lg:p-10">
                             <div className="flex flex-col gap-4 border-b border-black/10 pb-5 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="flex items-center gap-4">
                                     <span
@@ -2721,7 +3230,7 @@ function TeamSection() {
                                     </span>
                                     <span className="h-px w-14 bg-black/18" />
                                     <span className="text-[12px] font-semibold tracking-[0.18em] text-black/45 uppercase">
-                                        {member.badge}
+                                        {t(member.badge)}
                                     </span>
                                 </div>
 
@@ -2729,7 +3238,9 @@ function TeamSection() {
                                     <button
                                         type="button"
                                         onClick={goToPrevious}
-                                        aria-label="Lihat anggota sebelumnya"
+                                        aria-label={t(
+                                            'Lihat anggota sebelumnya',
+                                        )}
                                         className="inline-flex size-11 items-center justify-center rounded-full border border-black/15 bg-black/5 text-black transition hover:border-(--team-accent) hover:bg-black hover:text-white focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none"
                                     >
                                         <ArrowLeft
@@ -2740,7 +3251,9 @@ function TeamSection() {
                                     <button
                                         type="button"
                                         onClick={goToNext}
-                                        aria-label="Lihat anggota berikutnya"
+                                        aria-label={t(
+                                            'Lihat anggota berikutnya',
+                                        )}
                                         className="inline-flex size-11 items-center justify-center rounded-full border border-black/15 bg-black/5 text-black transition hover:border-(--team-accent) hover:bg-black hover:text-white focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none"
                                     >
                                         <ArrowRight
@@ -2783,32 +3296,32 @@ function TeamSection() {
                                         duration: 0.42,
                                         ease: [0.22, 1, 0.36, 1],
                                     }}
-                                    className="grid cursor-grab gap-10 pt-8 active:cursor-grabbing lg:grid-cols-[minmax(0,0.95fr)_minmax(390px,0.72fr)] lg:items-center lg:gap-14 lg:pt-10 xl:grid-cols-[minmax(0,0.92fr)_minmax(440px,0.7fr)]"
+                                    className="grid cursor-grab gap-8 pt-7 active:cursor-grabbing lg:grid-cols-[minmax(0,0.95fr)_minmax(390px,0.72fr)] lg:items-center lg:gap-14 lg:pt-10 xl:grid-cols-[minmax(0,0.92fr)_minmax(440px,0.7fr)]"
                                 >
                                     <div className="min-w-0">
                                         <p
                                             className="text-[12px] font-semibold tracking-[0.2em] uppercase"
                                             style={{ color: panelAccent }}
                                         >
-                                            {member.role}
+                                            {t(member.role)}
                                         </p>
-                                        <h3 className="mt-4 max-w-4xl text-[34px] leading-[1.14] font-semibold tracking-tight text-balance sm:text-[48px] lg:text-[62px]">
+                                        <h3 className="mt-4 max-w-4xl text-[30px] leading-[1.14] font-semibold tracking-tight text-balance sm:text-[48px] lg:text-[62px]">
                                             {member.name}
                                         </h3>
-                                        <p className="mt-8 max-w-3xl text-[20px] leading-8 text-black/72 sm:text-[26px] sm:leading-10">
-                                            {member.statement}
+                                        <p className="mt-6 max-w-3xl text-[17px] leading-7 text-black/72 sm:mt-8 sm:text-[26px] sm:leading-10">
+                                            {t(member.statement)}
                                         </p>
                                         <div className="mt-8 max-w-3xl border-t border-black/10 pt-6">
                                             <p className="text-[11px] font-semibold tracking-[0.18em] text-black/42 uppercase">
-                                                Area fokus
+                                                {t('Area fokus')}
                                             </p>
                                             <p className="mt-3 text-[15px] leading-7 text-black/60">
-                                                {member.focus}
+                                                {t(member.focus)}
                                             </p>
                                         </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-7 border-t border-black/10 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
+                                    <div className="flex flex-col gap-6 border-t border-black/10 pt-7 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
                                         <div className="relative mx-auto aspect-[0.72/1] w-full max-w-[150px] overflow-hidden rounded-full border border-black/12 bg-black/10 shadow-[0_28px_80px_-48px_rgba(0,0,0,0.72)] sm:max-w-[180px] lg:max-w-[205px] xl:max-w-[230px]">
                                             {member.photo ? (
                                                 <img
@@ -2842,10 +3355,10 @@ function TeamSection() {
                                                         className="min-w-0"
                                                     >
                                                         <dt className="text-[10px] font-semibold tracking-[0.18em] text-black/42 uppercase">
-                                                            {label}
+                                                            {t(label)}
                                                         </dt>
                                                         <dd className="mt-2 text-[13px] leading-5 text-black/72">
-                                                            {value}
+                                                            {t(value)}
                                                         </dd>
                                                     </div>
                                                 ),
@@ -2859,7 +3372,7 @@ function TeamSection() {
                                 <div
                                     className="flex items-center gap-2"
                                     role="tablist"
-                                    aria-label="Pilih anggota tim"
+                                    aria-label={t('Pilih anggota tim')}
                                 >
                                     {teamMembers.map((item, index) => {
                                         const isActive = index === activeMember;
@@ -2870,7 +3383,7 @@ function TeamSection() {
                                                 type="button"
                                                 role="tab"
                                                 aria-selected={isActive}
-                                                aria-label={`Lihat ${item.name}`}
+                                                aria-label={`${t('Lihat')} ${item.name}`}
                                                 onClick={() =>
                                                     goToMember(index)
                                                 }
@@ -2906,129 +3419,493 @@ function TeamSection() {
     );
 }
 
-function SelectedWorkSection() {
-    const reduce = useReducedMotion();
+function MobileTeamCard({
+    member,
+    activeMember,
+    onSelect,
+    onPrevious,
+    onNext,
+}: {
+    member: TeamMember;
+    activeMember: number;
+    onSelect: (index: number) => void;
+    onPrevious: () => void;
+    onNext: () => void;
+}) {
+    const { t } = useTranslator();
 
     return (
-        <section id="work" className="px-5 py-16 text-white sm:px-8 md:py-24">
-            <div className="mx-auto max-w-340">
-                <SectionHeader
-                    eyebrow="Selected work"
-                    title="Project real yang rapi dan siap dikembangkan."
-                    titleClassName="max-w-none lg:text-nowrap"
-                />
+        <div className="mt-8 lg:hidden">
+            <article className="rounded-[28px] border border-white/10 bg-[#111312] p-6 text-white shadow-[0_28px_90px_-62px_rgba(167,227,61,0.38)]">
+                <span className="inline-flex rounded-full bg-black px-4 py-2 text-[12px] font-semibold tracking-[0.14em] text-[#a7e33d] uppercase">
+                    {t(member.badge)}
+                </span>
 
-                <Reveal className="mt-7 flex justify-end">
-                    <Link
-                        href={projectsIndex.url()}
-                        className="group inline-flex h-11 w-fit items-center gap-2 rounded-xl border border-white/12 px-4 text-[13px] font-semibold text-white transition hover:border-[#a7e33d]/45 hover:bg-white/6 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
-                    >
-                        <LetterSwap3D>Semua Project</LetterSwap3D>
-                        <ArrowUpRight
-                            className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                            aria-hidden
-                        />
-                    </Link>
-                </Reveal>
+                <h3 className="mt-7 text-[32px] leading-tight font-semibold tracking-tight text-white">
+                    {member.name}
+                </h3>
 
-                <div className="mt-10 grid gap-8 md:grid-cols-2">
-                    {works.map((work, index) => (
-                        <Reveal key={work.number} delay={index * 0.05}>
-                            <motion.article
-                                className="group rounded-3xl border border-white/10 bg-[#111312] p-4 transition hover:border-[#a7e33d]/50"
-                                whileHover={
-                                    reduce ? undefined : { y: -5, rotateX: 1.2 }
-                                }
-                                transition={{
-                                    duration: 0.38,
-                                    ease: [0.22, 1, 0.36, 1],
+                <p className="mt-6 text-[20px] leading-9 text-white/72">
+                    “{t(member.statement)}”
+                </p>
+
+                <div className="mt-8 flex items-center gap-4">
+                    <div className="size-14 overflow-hidden rounded-full border border-white/12 bg-white/8">
+                        {member.photo ? (
+                            <img
+                                src={member.photo}
+                                alt={`Portrait ${member.name}`}
+                                className="h-full w-full object-cover"
+                                style={{
+                                    objectPosition: member.photoPosition,
                                 }}
+                                loading="lazy"
+                            />
+                        ) : (
+                            <div className="flex h-full w-full items-center justify-center text-[18px] font-semibold text-[#a7e33d]">
+                                {member.initials}
+                            </div>
+                        )}
+                    </div>
+                    <div className="min-w-0">
+                        <p className="text-[18px] leading-tight font-semibold text-white">
+                            {member.name}
+                        </p>
+                        <p className="mt-1 text-[14px] text-white/48">
+                            {t(member.role)}
+                        </p>
+                    </div>
+                </div>
+
+                <p className="mt-8 text-[13px] font-semibold tracking-[0.18em] text-white/30 uppercase">
+                    Solvara Studio
+                </p>
+            </article>
+
+            <div className="mt-7 flex items-center justify-between gap-5">
+                <div
+                    className="flex items-center gap-3"
+                    role="tablist"
+                    aria-label={t('Pilih anggota tim')}
+                >
+                    {teamMembers.map((item, index) => {
+                        const isActive = index === activeMember;
+
+                        return (
+                            <button
+                                key={item.name}
+                                type="button"
+                                role="tab"
+                                aria-selected={isActive}
+                                aria-label={`${t('Lihat')} ${item.name}`}
+                                onClick={() => onSelect(index)}
+                                className="rounded-full focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
                             >
-                                <Link
-                                    href={projectShow.url(work.slug)}
-                                    className="block focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
-                                >
-                                    <ProjectSnapshot
-                                        work={work}
-                                        index={index}
-                                    />
-                                </Link>
-                                <div className="mt-5 px-1 pb-2">
-                                    <div className="flex items-center gap-2 text-[11px] tracking-[0.18em] text-white/42 uppercase">
-                                        <span className="text-[#a7e33d]">
-                                            {work.number}
-                                        </span>
-                                        <span className="size-1 rounded-full bg-white/20" />
-                                        {work.category}
-                                    </div>
-                                    <div className="mt-2 flex items-start justify-between gap-4">
-                                        <h3 className="text-[30px] leading-[1.14] font-semibold tracking-tight group-hover:text-[#d2ed71]">
-                                            {work.name}
-                                        </h3>
-                                        <ArrowUpRight
-                                            className="mt-2 size-5 text-white/38 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#a7e33d]"
-                                            aria-hidden
-                                        />
-                                    </div>
-                                    <p className="mt-4 text-[14px] leading-6 text-white/58">
-                                        {work.summary}
-                                    </p>
-                                    <dl className="mt-5 grid gap-4 border-t border-white/10 pt-5 text-[13px] leading-6 text-white/58 sm:grid-cols-2">
-                                        <div>
-                                            <dt className="mb-1 text-[10px] tracking-[0.2em] text-white/34 uppercase">
-                                                Tantangan
-                                            </dt>
-                                            <dd>{work.challenge}</dd>
-                                        </div>
-                                        <div>
-                                            <dt className="mb-1 text-[10px] tracking-[0.2em] text-white/34 uppercase">
-                                                Hasil
-                                            </dt>
-                                            <dd>{work.result}</dd>
-                                        </div>
-                                    </dl>
-                                    <ul className="mt-5 flex flex-wrap gap-2">
-                                        {work.stack.map((item) => (
-                                            <li
-                                                key={item}
-                                                className="rounded-full border border-white/10 px-3 py-1 text-[11px] text-white/54"
-                                            >
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                                        <Link
-                                            href={projectShow.url(work.slug)}
-                                            className="group/link inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-white text-[13px] font-semibold text-black transition hover:bg-[#d2ed71] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
-                                        >
-                                            <LetterSwap3D>
-                                                Detail Project
-                                            </LetterSwap3D>
-                                            <ArrowRight
-                                                className="size-4 transition group-hover/link:translate-x-0.5"
-                                                aria-hidden
-                                            />
-                                        </Link>
-                                        <a
-                                            href={work.liveUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-white/12 text-[13px] font-semibold text-white transition hover:border-[#a7e33d]/45 hover:bg-white/6 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
-                                        >
-                                            <LetterSwap3D>
-                                                Buka Live
-                                            </LetterSwap3D>
-                                            <ArrowUpRight
-                                                className="size-4"
-                                                aria-hidden
-                                            />
-                                        </a>
-                                    </div>
-                                </div>
-                            </motion.article>
+                                <span
+                                    className={cn(
+                                        'block h-2.5 rounded-full transition-all',
+                                        isActive
+                                            ? 'w-13 bg-white'
+                                            : 'w-2.5 bg-white/24',
+                                    )}
+                                />
+                            </button>
+                        );
+                    })}
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={onPrevious}
+                        aria-label={t('Lihat anggota sebelumnya')}
+                        className="inline-flex size-13 items-center justify-center rounded-full bg-white/8 text-white transition hover:bg-[#a7e33d] hover:text-black focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
+                    >
+                        <ArrowLeft className="size-5" aria-hidden />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onNext}
+                        aria-label={t('Lihat anggota berikutnya')}
+                        className="inline-flex size-13 items-center justify-center rounded-full bg-white/8 text-white transition hover:bg-[#a7e33d] hover:text-black focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
+                    >
+                        <ArrowRight className="size-5" aria-hidden />
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function TeamCodeBackdrop({
+    member,
+    reduce,
+}: {
+    member: TeamMember;
+    reduce: boolean;
+}) {
+    const codeBackdrop =
+        member.badge === 'Network Layer'
+            ? {
+                  primaryTitle: 'resources/network/solvara-topology.ts',
+                  secondaryTitle: 'resources/network/noc-monitoring.ts',
+                  lines: networkTeamCodeLines,
+              }
+            : member.badge === 'Mobile Flow'
+              ? {
+                    primaryTitle: 'resources/mobile/solvara-app-flow.tsx',
+                    secondaryTitle: 'resources/mobile/device-quality.ts',
+                    lines: mobileTeamCodeLines,
+                }
+              : member.badge === 'Web Platform'
+                ? {
+                      primaryTitle: 'resources/js/pages/welcome.tsx',
+                      secondaryTitle: 'resources/js/solvara-web-flow.ts',
+                      lines: webTeamCodeLines,
+                  }
+                : null;
+
+    if (!codeBackdrop) {
+        return null;
+    }
+
+    const secondaryLines = codeBackdrop.lines
+        .slice(18)
+        .concat(codeBackdrop.lines.slice(0, 18));
+
+    return (
+        <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_30%,rgba(255,255,255,0.24),transparent_30%),linear-gradient(90deg,rgba(167,227,61,0.92)_0%,rgba(167,227,61,0.76)_34%,rgba(15,21,17,0.22)_100%)]" />
+            <div className="absolute inset-y-0 right-0 w-full bg-[linear-gradient(90deg,rgba(167,227,61,0.98)_0%,rgba(167,227,61,0.82)_28%,rgba(9,13,10,0.24)_100%)] lg:w-[68%]" />
+            <div className="absolute inset-y-0 right-0 w-full opacity-80 lg:w-[70%]">
+                <div className="grid h-full grid-cols-1 gap-3 px-5 py-8 font-mono text-[10px] leading-[1.75] font-medium text-white sm:text-[11px] lg:grid-cols-[1.05fr_0.95fr] lg:px-8 xl:text-[12px]">
+                    <CodeWindow
+                        title={codeBackdrop.primaryTitle}
+                        lines={codeBackdrop.lines}
+                        reduce={reduce}
+                    />
+                    <CodeWindow
+                        title={codeBackdrop.secondaryTitle}
+                        lines={secondaryLines}
+                        reduce={reduce}
+                        startDelay={900}
+                        muted
+                    />
+                </div>
+            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(167,227,61,0.99)_0%,rgba(167,227,61,0.94)_42%,rgba(167,227,61,0.48)_62%,transparent_82%)]" />
+            <motion.div
+                className="absolute inset-x-0 top-1/2 h-px bg-linear-to-r from-transparent via-white/70 to-transparent opacity-50"
+                animate={reduce ? undefined : { x: ['-80%', '80%'] }}
+                transition={{
+                    duration: 7,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                }}
+            />
+        </div>
+    );
+}
+
+function CodeWindow({
+    title,
+    lines,
+    muted = false,
+    reduce = false,
+    startDelay = 0,
+}: {
+    title: string;
+    lines: readonly string[];
+    muted?: boolean;
+    reduce?: boolean;
+    startDelay?: number;
+}) {
+    const totalCharacters = lines.reduce(
+        (total, line) => total + line.length + 1,
+        0,
+    );
+    const pauseCharacters = 280;
+    const [typedCharacters, setTypedCharacters] = useState(
+        reduce ? totalCharacters : 0,
+    );
+    const visibleCharacters = reduce
+        ? totalCharacters
+        : Math.min(typedCharacters, totalCharacters);
+
+    useEffect(() => {
+        if (reduce) {
+            setTypedCharacters(totalCharacters);
+
+            return;
+        }
+
+        setTypedCharacters(0);
+
+        let interval: number | undefined;
+        const timeout = window.setTimeout(() => {
+            interval = window.setInterval(() => {
+                setTypedCharacters((current) => {
+                    if (current >= totalCharacters + pauseCharacters) {
+                        return 0;
+                    }
+
+                    return current + 2;
+                });
+            }, 58);
+        }, startDelay);
+
+        return () => {
+            window.clearTimeout(timeout);
+
+            if (interval) {
+                window.clearInterval(interval);
+            }
+        };
+    }, [pauseCharacters, reduce, startDelay, totalCharacters]);
+
+    const getVisibleLine = (lineIndex: number) => {
+        const usedBeforeLine = lines
+            .slice(0, lineIndex)
+            .reduce((total, line) => total + line.length + 1, 0);
+        const remainingCharacters = visibleCharacters - usedBeforeLine;
+
+        if (remainingCharacters <= 0) {
+            return '';
+        }
+
+        return lines[lineIndex].slice(0, remainingCharacters);
+    };
+
+    const getCursorLine = () => {
+        let usedCharacters = 0;
+
+        for (let index = 0; index < lines.length; index += 1) {
+            const nextUsedCharacters = usedCharacters + lines[index].length + 1;
+
+            if (visibleCharacters <= nextUsedCharacters) {
+                return index;
+            }
+
+            usedCharacters = nextUsedCharacters;
+        }
+
+        return lines.length - 1;
+    };
+
+    const cursorLine = getCursorLine();
+    const visibleLineCount = muted ? 20 : 24;
+    const firstVisibleLine = Math.max(
+        0,
+        Math.min(cursorLine - 6, Math.max(0, lines.length - visibleLineCount)),
+    );
+    const visibleLines = lines.slice(
+        firstVisibleLine,
+        firstVisibleLine + visibleLineCount,
+    );
+
+    return (
+        <div
+            className={cn(
+                'overflow-hidden rounded-2xl border border-white/18 bg-black/24 shadow-[0_28px_100px_-72px_rgba(0,0,0,0.8)] backdrop-blur-[2px]',
+                muted && 'hidden opacity-70 lg:block',
+            )}
+        >
+            <div className="flex items-center justify-between border-b border-white/12 px-4 py-3 text-white/60">
+                <span className="truncate text-[9px] font-semibold tracking-[0.18em] uppercase">
+                    {title}
+                </span>
+                <span className="size-2 rounded-full bg-white/70" />
+            </div>
+            <pre className="max-h-105 overflow-hidden px-4 py-4 text-white/80">
+                {visibleLines.map((line, visibleIndex) => {
+                    const index = firstVisibleLine + visibleIndex;
+                    const visibleLine = getVisibleLine(index);
+                    const lineIsActive =
+                        !reduce &&
+                        index === cursorLine &&
+                        typedCharacters <= totalCharacters;
+
+                    return (
+                        <code key={`${line}-${index}`} className="block">
+                            <span className="mr-4 inline-block w-6 text-right text-white/38">
+                                {String(index + 1).padStart(2, '0')}
+                            </span>
+                            <span
+                                className={cn(
+                                    line.trim().startsWith('const') ||
+                                        line.trim().startsWith('function') ||
+                                        line.trim().startsWith('export')
+                                        ? 'text-white'
+                                        : 'text-white/68',
+                                )}
+                            >
+                                {visibleLine || ' '}
+                            </span>
+                            {lineIsActive && (
+                                <motion.span
+                                    className="ml-0.5 inline-block h-4 w-px translate-y-0.5 bg-white/80"
+                                    animate={{ opacity: [0, 1, 0] }}
+                                    transition={{
+                                        duration: 0.8,
+                                        repeat: Infinity,
+                                        ease: 'easeInOut',
+                                    }}
+                                />
+                            )}
+                        </code>
+                    );
+                })}
+            </pre>
+        </div>
+    );
+}
+
+function SelectedWorkSection() {
+    const reduce = useReducedMotion();
+    const { t } = useTranslator();
+
+    return (
+        <section
+            id="work"
+            className="px-5 py-10 text-[#0b1110] sm:px-8 md:py-14 dark:text-white"
+        >
+            <div className="mx-auto max-w-340">
+                <div className="overflow-hidden rounded-3xl border border-black/10 bg-[rgba(11,17,16,0.1)] shadow-[0_30px_110px_-82px_rgba(11,17,16,0.55)] dark:border-white/10 dark:bg-[#2d342f] dark:shadow-[0_34px_120px_-82px_rgba(0,0,0,0.75)]">
+                    <div className="bg-white p-5 sm:p-8 md:p-10 dark:bg-[#0d100f]">
+                        <SectionHeader
+                            eyebrow={t('Selected work')}
+                            title={t(
+                                'Project real yang rapi dan siap dikembangkan.',
+                            )}
+                            titleClassName="max-w-none lg:text-nowrap"
+                        />
+
+                        <Reveal className="mt-7 flex justify-end">
+                            <Link
+                                href={projectsIndex.url()}
+                                className="group inline-flex h-11 w-fit items-center gap-2 rounded-xl border border-black/10 px-4 text-[13px] font-semibold text-black/72 transition hover:border-[#a7e33d]/45 hover:bg-black/4 hover:text-black focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none dark:border-white/12 dark:text-white dark:hover:bg-white/6"
+                            >
+                                <LetterSwap3D>
+                                    {t('Semua Project')}
+                                </LetterSwap3D>
+                                <ArrowUpRight
+                                    className="size-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                    aria-hidden
+                                />
+                            </Link>
                         </Reveal>
-                    ))}
+                    </div>
+
+                    <div className="grid gap-px md:grid-cols-2">
+                        {works.map((work, index) => (
+                            <Reveal
+                                key={work.number}
+                                delay={index * 0.05}
+                                className="h-full"
+                            >
+                                <motion.article
+                                    className="group h-full bg-white p-4 transition hover:bg-[#fbfff1] dark:bg-[#111312] dark:hover:bg-[#141814]"
+                                    whileHover={
+                                        reduce
+                                            ? undefined
+                                            : { y: -5, rotateX: 1.2 }
+                                    }
+                                    transition={{
+                                        duration: 0.38,
+                                        ease: [0.22, 1, 0.36, 1],
+                                    }}
+                                >
+                                    <Link
+                                        href={projectShow.url(work.slug)}
+                                        className="block focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
+                                    >
+                                        <ProjectSnapshot
+                                            work={work}
+                                            index={index}
+                                        />
+                                    </Link>
+                                    <div className="mt-5 px-1 pb-2">
+                                        <div className="flex items-center gap-2 text-[11px] tracking-[0.18em] text-black/42 uppercase dark:text-white/42">
+                                            <span className="text-[#67a500] dark:text-[#a7e33d]">
+                                                {work.number}
+                                            </span>
+                                            <span className="size-1 rounded-full bg-black/18 dark:bg-white/20" />
+                                            {t(work.category)}
+                                        </div>
+                                        <div className="mt-2 flex items-start justify-between gap-4">
+                                            <h3 className="text-[30px] leading-[1.14] font-semibold tracking-tight text-[#0b1110] group-hover:text-[#5f8f12] dark:text-white dark:group-hover:text-[#d2ed71]">
+                                                {work.name}
+                                            </h3>
+                                            <ArrowUpRight
+                                                className="mt-2 size-5 text-black/35 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#5f8f12] dark:text-white/38 dark:group-hover:text-[#a7e33d]"
+                                                aria-hidden
+                                            />
+                                        </div>
+                                        <p className="mt-4 text-[14px] leading-6 text-black/58 dark:text-white/58">
+                                            {t(work.summary)}
+                                        </p>
+                                        <dl className="mt-5 grid gap-4 border-t border-black/10 pt-5 text-[13px] leading-6 text-black/58 sm:grid-cols-2 dark:border-white/10 dark:text-white/58">
+                                            <div>
+                                                <dt className="mb-1 text-[10px] tracking-[0.2em] text-black/34 uppercase dark:text-white/34">
+                                                    {t('Tantangan')}
+                                                </dt>
+                                                <dd>{t(work.challenge)}</dd>
+                                            </div>
+                                            <div>
+                                                <dt className="mb-1 text-[10px] tracking-[0.2em] text-black/34 uppercase dark:text-white/34">
+                                                    {t('Hasil')}
+                                                </dt>
+                                                <dd>{t(work.result)}</dd>
+                                            </div>
+                                        </dl>
+                                        <ul className="mt-5 flex flex-wrap gap-2">
+                                            {work.stack.map((item) => (
+                                                <li
+                                                    key={item}
+                                                    className="rounded-full border border-black/10 px-3 py-1 text-[11px] text-black/54 dark:border-white/10 dark:text-white/54"
+                                                >
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                                            <Link
+                                                href={projectShow.url(
+                                                    work.slug,
+                                                )}
+                                                className="group/link inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-black/10 bg-white text-[13px] font-semibold text-black shadow-sm transition hover:bg-[#d2ed71] focus-visible:ring-2 focus-visible:ring-[#a7e33d]/45 focus-visible:outline-none dark:border-transparent dark:shadow-none dark:focus-visible:ring-white/30"
+                                            >
+                                                <LetterSwap3D>
+                                                    {t('Detail Project')}
+                                                </LetterSwap3D>
+                                                <ArrowRight
+                                                    className="size-4 transition group-hover/link:translate-x-0.5"
+                                                    aria-hidden
+                                                />
+                                            </Link>
+                                            <a
+                                                href={work.liveUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-black/12 text-[13px] font-semibold text-black/72 transition hover:border-[#a7e33d]/45 hover:bg-black/4 hover:text-black focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none dark:border-white/12 dark:text-white dark:hover:bg-white/6"
+                                            >
+                                                <LetterSwap3D>
+                                                    {t('Buka Live')}
+                                                </LetterSwap3D>
+                                                <ArrowUpRight
+                                                    className="size-4"
+                                                    aria-hidden
+                                                />
+                                            </a>
+                                        </div>
+                                    </div>
+                                </motion.article>
+                            </Reveal>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
@@ -3036,44 +3913,46 @@ function SelectedWorkSection() {
 }
 
 function WhySolvaraSection() {
+    const { t } = useTranslator();
+
     return (
         <section
             id="why"
-            className="relative overflow-x-clip px-5 py-16 text-white sm:px-8 md:py-24"
+            className="relative overflow-x-clip px-5 py-10 text-[#0b1110] sm:px-8 md:py-14 dark:text-white"
         >
             <div className="relative mx-auto max-w-340">
                 <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.72fr)] lg:items-end">
                     <div>
-                        <SectionKicker>Kenapa pilih kami</SectionKicker>
+                        <SectionKicker>{t('Kenapa pilih kami')}</SectionKicker>
                         <Reveal>
-                            <h2 className="mt-5 max-w-5xl text-[38px] leading-[1.1] font-semibold tracking-tight text-balance sm:text-[58px] lg:text-[70px]">
-                                Solusi sesuai kebutuhan.{' '}
+                            <h2 className="mt-5 max-w-5xl text-[34px] leading-[1.1] font-semibold tracking-tight text-balance sm:text-[58px] lg:text-[70px]">
+                                {t('Solusi sesuai kebutuhan.')}{' '}
                                 <span className="text-[#a7e33d]">
-                                    Support setelah instalasi.
+                                    {t('Support setelah instalasi.')}
                                 </span>
                             </h2>
                         </Reveal>
                     </div>
 
                     <Reveal delay={0.12}>
-                        <div className="rounded-[22px] border border-white/10 bg-white/4 p-5">
-                            <p className="text-[15px] leading-7 text-white/58">
-                                Konsultasi gratis, eksekusi teknis jelas, dan
-                                support awal untuk web, mobile, network, server,
-                                CCTV, hingga kebutuhan ISP.
+                        <div className="rounded-[22px] border border-black/10 bg-white p-5 shadow-[0_20px_70px_-55px_rgba(11,17,16,0.5)] dark:border-white/10 dark:bg-[rgba(255,255,255,0.04)] dark:shadow-none">
+                            <p className="text-[15px] leading-7 text-black/62 dark:text-white/58">
+                                {t(
+                                    'Konsultasi gratis, eksekusi teknis jelas, dan support awal untuk web, mobile, network, server, CCTV, hingga kebutuhan ISP.',
+                                )}
                             </p>
-                            <div className="mt-5 inline-flex items-center gap-3 rounded-full border border-white/10 bg-black/20 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] text-white/52 uppercase">
+                            <div className="mt-5 inline-flex items-center gap-3 rounded-full border border-black/10 bg-neutral-950/4 px-4 py-2 text-[11px] font-semibold tracking-[0.16em] text-black/52 uppercase dark:border-white/10 dark:bg-neutral-950/20 dark:text-white/52">
                                 <span
                                     aria-hidden
                                     className="size-2 rounded-full bg-[#a7e33d] shadow-[0_0_18px_rgba(167,227,61,0.55)]"
                                 />
-                                06 prinsip kerja
+                                {t('06 prinsip kerja')}
                             </div>
                         </div>
                     </Reveal>
                 </div>
 
-                <ul className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <ul className="mt-8 grid gap-px overflow-hidden rounded-[28px] border border-black/10 bg-[rgba(11,17,16,0.1)] shadow-[0_30px_110px_-82px_rgba(11,17,16,0.55)] md:grid-cols-2 xl:grid-cols-3 dark:border-white/10 dark:bg-[rgba(255,255,255,0.1)] dark:shadow-none">
                     {whyValues.map((value, index) => (
                         <WhyValueLine
                             key={value.title}
@@ -3096,6 +3975,7 @@ function WhyValueLine({
 }) {
     const Icon = value.icon;
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
         <motion.li
@@ -3107,27 +3987,27 @@ function WhyValueLine({
                 delay: index * 0.055,
                 ease: [0.22, 1, 0.36, 1],
             }}
-            className="group relative flex min-h-56 flex-col rounded-[22px] border border-white/10 bg-[#101311] p-5 transition duration-300 hover:border-[#a7e33d]/35 hover:bg-[#141814] sm:p-6"
+            className="group relative flex min-h-0 flex-col bg-white p-5 transition duration-300 hover:bg-[#fbfff1] sm:min-h-56 sm:p-6 dark:bg-[#101311] dark:hover:bg-[#141814]"
         >
             <div className="flex items-start justify-between gap-4">
                 <motion.span
                     aria-hidden
                     whileHover={reduce ? undefined : { scale: 1.05, y: -1 }}
                     transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-                    className="flex size-11 shrink-0 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-[#a7e33d]/82 transition duration-300 group-hover:border-[#a7e33d]/28 group-hover:bg-[#a7e33d]/8"
+                    className="flex size-11 shrink-0 items-center justify-center rounded-[14px] border border-black/10 bg-neutral-950/4 text-[#68a800] transition duration-300 group-hover:border-[#a7e33d]/45 group-hover:bg-[#a7e33d]/12 dark:border-white/10 dark:bg-[rgba(255,255,255,0.05)] dark:text-[#a7e33d]/82 dark:group-hover:border-[#a7e33d]/28 dark:group-hover:bg-[#a7e33d]/8"
                 >
                     <Icon className="size-5" />
                 </motion.span>
-                <span className="font-mono text-[11px] tracking-[0.18em] text-white/24 transition duration-300 group-hover:text-[#a7e33d]">
+                <span className="font-mono text-[11px] tracking-[0.18em] text-black/24 transition duration-300 group-hover:text-[#68a800] dark:text-white/24 dark:group-hover:text-[#a7e33d]">
                     0{index + 1}
                 </span>
             </div>
 
-            <h3 className="mt-7 max-w-sm text-[22px] leading-[1.15] font-semibold tracking-tight text-white sm:text-[25px]">
-                {value.title}
+            <h3 className="mt-7 max-w-sm text-[22px] leading-[1.15] font-semibold tracking-tight text-[#0b1110] sm:text-[25px] dark:text-white">
+                {t(value.title)}
             </h3>
-            <p className="mt-3 max-w-md text-[14px] leading-7 text-white/50 transition duration-300 group-hover:text-white/66">
-                {value.description}
+            <p className="mt-3 max-w-md text-[14px] leading-7 text-black/56 transition duration-300 group-hover:text-black/70 dark:text-white/50 dark:group-hover:text-white/66">
+                {t(value.description)}
             </p>
         </motion.li>
     );
@@ -3135,33 +4015,38 @@ function WhyValueLine({
 
 function TechQualitySection() {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
-        <section className="px-5 py-16 text-white sm:px-8 md:py-24">
+        <section className="px-5 py-10 text-[#0b1110] sm:px-8 md:py-14 dark:text-white">
             <div className="mx-auto max-w-340">
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0c0f0e] p-5 shadow-[0_34px_120px_-72px_rgba(167,227,61,0.5)] sm:p-8 md:p-10">
+                <div className="relative overflow-hidden rounded-3xl border border-black/10 bg-white p-5 shadow-[0_34px_120px_-72px_rgba(11,17,16,0.52)] sm:p-8 md:p-10 dark:border-[#2c332e] dark:bg-[#0d100f] dark:shadow-[0_34px_120px_-78px_rgba(0,0,0,0.72)]">
                     <div
                         aria-hidden
                         className="pointer-events-none absolute inset-x-12 top-0 h-px bg-linear-to-r from-transparent via-[#a7e33d] to-transparent opacity-80"
                     />
                     <div
                         aria-hidden
-                        className="pointer-events-none absolute -top-36 right-0 size-90 rounded-full bg-[#a7e33d]/12 blur-3xl"
+                        className="pointer-events-none absolute -top-36 right-0 size-90 rounded-full bg-[#a7e33d]/8 blur-3xl"
                     />
                     <div
                         aria-hidden
-                        className="pointer-events-none absolute -bottom-42 -left-20 size-80 rounded-full bg-white/5 blur-3xl"
+                        className="pointer-events-none absolute -bottom-42 -left-20 size-80 rounded-full bg-black/5 blur-3xl dark:bg-[#a7e33d]/3"
                     />
 
                     <div className="relative">
                         <SectionHeader
-                            eyebrow="Tech & Quality"
-                            title="Tech stack yang benar-benar dipakai untuk build dan maintenance."
-                            description="Stack disusun per kebutuhan web, mobile, network, server, CCTV, testing, dan deployment agar sistem mudah dirawat setelah rilis."
+                            eyebrow={t('Tech & Quality')}
+                            title={t(
+                                'Tech stack yang benar-benar dipakai untuk build dan maintenance.',
+                            )}
+                            description={t(
+                                'Stack disusun per kebutuhan web, mobile, network, server, CCTV, testing, dan deployment agar sistem mudah dirawat setelah rilis.',
+                            )}
                             titleClassName="max-w-4xl"
                         />
 
-                        <div className="mt-8 flex flex-wrap gap-2 border-y border-white/10 py-4">
+                        <div className="mt-8 flex flex-wrap gap-2 border-y border-black/10 py-4 dark:border-[#2a302c]">
                             {[
                                 'Web',
                                 'Mobile',
@@ -3187,14 +4072,14 @@ function TechQualitySection() {
                                         duration: 0.42,
                                         delay: index * 0.035,
                                     }}
-                                    className="rounded-full border border-white/10 bg-white/4 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-white/62 uppercase"
+                                    className="rounded-full border border-black/10 bg-neutral-950/4 px-3 py-1 text-[11px] font-semibold tracking-[0.14em] text-black/58 uppercase dark:border-[#303730] dark:bg-[#141814] dark:text-white/58"
                                 >
-                                    {label}
+                                    {t(label)}
                                 </motion.span>
                             ))}
                         </div>
 
-                        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                        <div className="mt-8 grid gap-px overflow-hidden rounded-2xl border border-black/10 bg-[rgba(11,17,16,0.1)] md:grid-cols-2 xl:grid-cols-3 dark:border-[#2d342f] dark:bg-[#2d342f]">
                             {techGroups.map((group, index) => (
                                 <Reveal
                                     key={group.label}
@@ -3210,7 +4095,7 @@ function TechQualitySection() {
                                             stiffness: 260,
                                             damping: 24,
                                         }}
-                                        className="group relative flex h-full min-h-58 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/4 p-5 transition duration-300 hover:border-[#a7e33d]/40 hover:bg-[#121713] sm:p-6"
+                                        className="group relative flex h-full min-h-58 flex-col overflow-hidden bg-[#f8faf3] p-5 transition duration-300 hover:bg-white sm:p-6 dark:bg-[#141814] dark:hover:bg-[#171d18]"
                                     >
                                         <div
                                             aria-hidden
@@ -3229,16 +4114,16 @@ function TechQualitySection() {
                                                         <span className="relative inline-flex size-2 rounded-full bg-[#a7e33d]" />
                                                     </span>
                                                     <h3 className="text-[12px] font-semibold tracking-[0.2em] text-[#a7e33d] uppercase">
-                                                        {group.label}
+                                                        {t(group.label)}
                                                     </h3>
                                                 </div>
-                                                <p className="mt-3 max-w-72 text-[13px] leading-6 text-white/45">
+                                                <p className="mt-3 max-w-72 text-[13px] leading-6 text-black/50 dark:text-white/45">
                                                     {group.items
                                                         .slice(0, 3)
                                                         .join(' / ')}
                                                 </p>
                                             </div>
-                                            <span className="font-mono text-[11px] tracking-[0.18em] text-white/24 transition duration-300 group-hover:text-[#a7e33d]">
+                                            <span className="font-mono text-[11px] tracking-[0.18em] text-black/22 transition duration-300 group-hover:text-[#68a800] dark:text-white/24 dark:group-hover:text-[#a7e33d]">
                                                 {String(index + 1).padStart(
                                                     2,
                                                     '0',
@@ -3254,8 +4139,8 @@ function TechQualitySection() {
                                                         className={cn(
                                                             'rounded-full border px-3 py-1 text-[12px] transition duration-300',
                                                             itemIndex < 2
-                                                                ? 'border-[#a7e33d]/28 bg-[#a7e33d]/10 text-[#d7ff7a]'
-                                                                : 'border-white/10 bg-black/16 text-white/60 group-hover:border-white/16 group-hover:text-white/78',
+                                                                ? 'border-[#a7e33d]/38 bg-[#a7e33d]/14 text-[#5f8f12] dark:border-[#a7e33d]/30 dark:bg-[#a7e33d]/10 dark:text-[#d7ff7a]'
+                                                                : 'border-black/10 bg-white text-black/58 group-hover:border-black/16 group-hover:text-black/76 dark:border-[#303730] dark:bg-[#101311] dark:text-white/58 dark:group-hover:border-[#3b443d] dark:group-hover:text-white/76',
                                                         )}
                                                         style={{
                                                             transitionDelay: `${itemIndex * 18}ms`,
@@ -3268,19 +4153,19 @@ function TechQualitySection() {
                                         </ul>
 
                                         <div className="relative mt-auto pt-6">
-                                            <div className="h-px bg-linear-to-r from-white/10 via-white/5 to-transparent" />
+                                            <div className="h-px bg-linear-to-r from-black/10 via-black/5 to-transparent dark:from-[#313833] dark:via-[#252b27]" />
                                         </div>
                                     </motion.article>
                                 </Reveal>
                             ))}
                         </div>
 
-                        <div className="mt-8 rounded-2xl border border-white/10 bg-black/18 p-4 sm:p-5">
+                        <div className="mt-8 rounded-2xl border border-black/10 bg-[#f8faf3] p-4 sm:p-5 dark:border-[#2d342f] dark:bg-[#141814]">
                             <div className="mb-4 flex items-center justify-between gap-4">
-                                <p className="text-[11px] font-semibold tracking-[0.2em] text-white/42 uppercase">
-                                    Quality control
+                                <p className="text-[11px] font-semibold tracking-[0.2em] text-black/44 uppercase dark:text-white/42">
+                                    {t('Quality control')}
                                 </p>
-                                <span className="hidden h-px flex-1 bg-linear-to-r from-white/10 to-transparent sm:block" />
+                                <span className="hidden h-px flex-1 bg-linear-to-r from-black/10 to-transparent sm:block dark:from-[#303730]" />
                             </div>
 
                             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -3302,13 +4187,13 @@ function TechQualitySection() {
                                             duration: 0.45,
                                             delay: index * 0.04,
                                         }}
-                                        className="flex items-center gap-2 text-[13px] text-white/62"
+                                        className="flex items-center gap-2 text-[13px] text-black/62 dark:text-white/62"
                                     >
                                         <Check
                                             className="size-4 shrink-0 text-[#a7e33d]"
                                             aria-hidden
                                         />
-                                        {note}
+                                        {t(note)}
                                     </motion.div>
                                 ))}
                             </div>
@@ -3321,16 +4206,18 @@ function TechQualitySection() {
 }
 
 function TestimonialsSection() {
+    const { t } = useTranslator();
+
     return (
-        <section className="px-5 py-16 text-white sm:px-8 md:py-24">
+        <section className="px-5 py-10 text-white sm:px-8 md:py-14">
             <div className="mx-auto max-w-340">
                 <SectionHeader
-                    eyebrow="Testimonials"
-                    title="Yang terasa setelah project berjalan rapi."
+                    eyebrow={t('Testimonials')}
+                    title={t('Yang terasa setelah project berjalan rapi.')}
                     titleClassName="max-w-none lg:text-nowrap"
                 />
 
-                <div className="relative -mx-5 mt-10 overflow-hidden px-5 md:mx-0 md:px-0">
+                <div className="relative -mx-5 mt-8 overflow-hidden px-5 md:mx-0 md:px-0">
                     <div
                         aria-hidden
                         className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-linear-to-r from-black to-transparent sm:w-28"
@@ -3355,7 +4242,7 @@ function TestimonialsSection() {
                                                 ? index * 0.04
                                                 : undefined
                                         }
-                                        className="w-[82vw] max-w-105 md:w-108 xl:w-115"
+                                        className="w-[86vw] max-w-95 sm:w-[78vw] sm:max-w-105 md:w-108 xl:w-115"
                                     >
                                         <TestimonialCard
                                             testimonial={testimonial}
@@ -3376,8 +4263,10 @@ function TestimonialCard({
 }: {
     testimonial: (typeof testimonials)[number];
 }) {
+    const { t } = useTranslator();
+
     return (
-        <figure className="flex h-full min-h-82.5 flex-col rounded-[22px] border border-white/10 bg-[#111312] p-6">
+        <figure className="flex h-full min-h-72 flex-col rounded-[22px] border border-white/10 bg-[#111312] p-5 sm:min-h-82.5 sm:p-6">
             <div className="mb-5 flex items-start justify-between gap-4">
                 <span
                     className="font-display text-[54px] leading-none text-[#a7e33d]"
@@ -3390,14 +4279,14 @@ function TestimonialCard({
                 </span>
             </div>
             <blockquote className="-mt-6 text-[16px] leading-7 font-semibold tracking-tight text-white/88">
-                {testimonial.quote}
+                {t(testimonial.quote)}
             </blockquote>
             <figcaption className="mt-auto border-t border-white/10 pt-5">
                 <div className="text-[14px] font-semibold">
                     {testimonial.name}
                 </div>
                 <div className="mt-1 text-[12px] text-white/45">
-                    {testimonial.role}
+                    {t(testimonial.role)}
                 </div>
             </figcaption>
         </figure>
@@ -3407,15 +4296,16 @@ function TestimonialCard({
 function FAQSection() {
     const [open, setOpen] = useState(0);
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
 
     return (
-        <section className="px-5 py-16 text-white sm:px-8 md:py-24">
+        <section className="px-5 py-10 text-white sm:px-8 md:py-14">
             <div className="mx-auto grid max-w-340 gap-10 lg:grid-cols-[0.8fr_1.2fr]">
                 <div>
-                    <SectionKicker>FAQ</SectionKicker>
+                    <SectionKicker>{t('FAQ')}</SectionKicker>
                     <Reveal>
-                        <h2 className="mt-4 max-w-xl text-[42px] leading-[1.14] font-semibold tracking-tight sm:text-[56px]">
-                            Pertanyaan yang biasanya muncul di awal.
+                        <h2 className="mt-4 max-w-xl text-[36px] leading-[1.14] font-semibold tracking-tight sm:text-[56px]">
+                            {t('Pertanyaan yang biasanya muncul di awal.')}
                         </h2>
                     </Reveal>
                 </div>
@@ -3439,8 +4329,8 @@ function FAQSection() {
                                     onClick={() => setOpen(isOpen ? -1 : index)}
                                     className="flex w-full items-center justify-between gap-6 py-6 text-left focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
                                 >
-                                    <span className="text-[18px] font-semibold tracking-tight">
-                                        {item.question}
+                                    <span className="text-[16px] font-semibold tracking-tight sm:text-[18px]">
+                                        {t(item.question)}
                                     </span>
                                     <span className="solvara-icon-box flex size-9 shrink-0 items-center justify-center rounded-full border border-black/12 bg-white text-[#65ad00] shadow-[0_12px_34px_rgba(11,17,16,0.12)] transition">
                                         {isOpen ? (
@@ -3484,7 +4374,7 @@ function FAQSection() {
                                             className="overflow-hidden"
                                         >
                                             <p className="max-w-2xl pb-6 text-[15px] leading-7 text-white/56">
-                                                {item.answer}
+                                                {t(item.answer)}
                                             </p>
                                         </motion.div>
                                     )}
@@ -3501,6 +4391,7 @@ function FAQSection() {
 function ContactSection() {
     const [submitted, setSubmitted] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
+    const { t } = useTranslator();
 
     const {
         register,
@@ -3557,22 +4448,22 @@ function ContactSection() {
 
     return (
         <section id="contact" className="px-2 pb-2 text-black">
-            <div className="rounded-3xl bg-white px-5 py-14 sm:px-8 md:py-20">
+            <div className="rounded-3xl bg-white px-5 py-12 sm:px-8 md:py-16">
                 <div className="mx-auto grid max-w-340 gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
                     <div>
                         <div className="text-[12px] font-semibold tracking-[0.2em] text-black/42 uppercase">
-                            Contact
+                            {t('Contact')}
                         </div>
-                        <h2 className="mt-4 max-w-xl text-[42px] leading-[1.14] font-semibold tracking-tight sm:text-[62px]">
-                            Butuh solusi IT untuk bisnis Anda?
+                        <h2 className="mt-4 max-w-xl text-[36px] leading-[1.14] font-semibold tracking-tight sm:text-[62px]">
+                            {t('Butuh solusi IT untuk bisnis Anda?')}
                             <span className="block text-[#6ea314]">
-                                Konsultasi gratis sekarang.
+                                {t('Konsultasi gratis sekarang.')}
                             </span>
                         </h2>
                         <p className="mt-6 max-w-md text-[15px] leading-7 text-black/55">
-                            Ceritakan kebutuhan web, mobile, network, server,
-                            CCTV, atau ISP. Kami bantu susun langkah pertama
-                            yang realistis.
+                            {t(
+                                'Ceritakan kebutuhan web, mobile, network, server, CCTV, atau ISP. Kami bantu susun langkah pertama yang realistis.',
+                            )}
                         </p>
                         <div className="mt-8 grid gap-3 text-[13px] text-black/54">
                             {[
@@ -3585,7 +4476,7 @@ function ContactSection() {
                                     className="flex items-center gap-2"
                                 >
                                     <span className="size-1.5 rounded-full bg-gold" />
-                                    {item}
+                                    {t(item)}
                                 </div>
                             ))}
                         </div>
@@ -3593,10 +4484,12 @@ function ContactSection() {
                             href={WHATSAPP_URL}
                             target="_blank"
                             rel="noreferrer"
-                            className="group mt-8 inline-flex h-12 w-fit items-center justify-center gap-2 rounded-xl bg-black px-6 text-[14px] font-semibold text-white transition hover:bg-[#18201d] focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none"
+                            className="group mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-6 text-[14px] font-semibold text-white transition hover:bg-[#18201d] focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none sm:w-fit"
                         >
                             <MessageCircle className="size-4" aria-hidden />
-                            <LetterSwap3D>Hubungi via WhatsApp</LetterSwap3D>
+                            <LetterSwap3D>
+                                {t('Hubungi via WhatsApp')}
+                            </LetterSwap3D>
                         </a>
                     </div>
 
@@ -3621,20 +4514,20 @@ function ContactSection() {
 
                             <div className="grid gap-5 md:grid-cols-2">
                                 <Field
-                                    label="Nama"
+                                    label={t('Nama')}
                                     error={errors.name?.message}
                                     required
                                 >
                                     <input
                                         type="text"
                                         autoComplete="name"
-                                        placeholder="Nama lengkap"
+                                        placeholder={t('Nama lengkap')}
                                         className={inputClass(!!errors.name)}
                                         {...register('name')}
                                     />
                                 </Field>
                                 <Field
-                                    label="Email atau WhatsApp"
+                                    label={t('Email atau WhatsApp')}
                                     error={errors.contact?.message}
                                     required
                                 >
@@ -3647,7 +4540,7 @@ function ContactSection() {
                                     />
                                 </Field>
                                 <Field
-                                    label="Jenis project"
+                                    label={t('Jenis project')}
                                     error={errors.project_type?.message}
                                     required
                                 >
@@ -3659,17 +4552,17 @@ function ContactSection() {
                                         {...register('project_type')}
                                     >
                                         <option value="" disabled>
-                                            Pilih jenis project
+                                            {t('Pilih jenis project')}
                                         </option>
                                         {projectTypes.map((type) => (
                                             <option key={type} value={type}>
-                                                {type}
+                                                {t(type)}
                                             </option>
                                         ))}
                                     </select>
                                 </Field>
                                 <Field
-                                    label="Budget range"
+                                    label={t('Budget range')}
                                     error={errors.budget?.message}
                                     required
                                 >
@@ -3679,17 +4572,17 @@ function ContactSection() {
                                         {...register('budget')}
                                     >
                                         <option value="" disabled>
-                                            Pilih budget range
+                                            {t('Pilih budget range')}
                                         </option>
                                         {budgetRanges.map((range) => (
                                             <option key={range} value={range}>
-                                                {range}
+                                                {t(range)}
                                             </option>
                                         ))}
                                     </select>
                                 </Field>
                                 <Field
-                                    label="Target deadline"
+                                    label={t('Target deadline')}
                                     error={errors.deadline?.message}
                                 >
                                     <select
@@ -3700,24 +4593,26 @@ function ContactSection() {
                                         {...register('deadline')}
                                     >
                                         <option value="">
-                                            Pilih target deadline
+                                            {t('Pilih target deadline')}
                                         </option>
                                         {deadlineRanges.map((range) => (
                                             <option key={range} value={range}>
-                                                {range}
+                                                {t(range)}
                                             </option>
                                         ))}
                                     </select>
                                 </Field>
                                 <Field
-                                    label="Pesan"
+                                    label={t('Pesan')}
                                     error={errors.message?.message}
                                     required
                                     className="md:col-span-2"
                                 >
                                     <textarea
                                         rows={5}
-                                        placeholder="Ceritakan ringkas konteks project, halaman/fitur yang dibutuhkan, dan apa yang sudah dimiliki saat ini."
+                                        placeholder={t(
+                                            'Ceritakan ringkas konteks project, halaman/fitur yang dibutuhkan, dan apa yang sudah dimiliki saat ini.',
+                                        )}
                                         className={cn(
                                             inputClass(!!errors.message),
                                             'resize-y',
@@ -3732,19 +4627,20 @@ function ContactSection() {
                                     role="alert"
                                     className="mt-5 rounded-xl border border-coral/25 bg-coral/8 px-4 py-3 text-[13px] text-[#9a3a31]"
                                 >
-                                    {serverError}
+                                    {t(serverError)}
                                 </p>
                             )}
 
                             <div className="mt-7 flex flex-col gap-4 border-t border-black/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
                                 <p className="max-w-sm text-[12px] leading-5 text-black/44">
-                                    Data hanya dipakai untuk meninjau kebutuhan
-                                    project dan menyusun langkah awal.
+                                    {t(
+                                        'Data hanya dipakai untuk meninjau kebutuhan project dan menyusun langkah awal.',
+                                    )}
                                 </p>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-black px-6 text-[14px] font-semibold text-white transition hover:bg-[#18201d] focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-70"
+                                    className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-black px-6 text-[14px] font-semibold text-white transition hover:bg-[#18201d] focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -3752,12 +4648,12 @@ function ContactSection() {
                                                 className="size-4 animate-spin"
                                                 aria-hidden
                                             />
-                                            Mengirim
+                                            {t('Mengirim')}
                                         </>
                                     ) : (
                                         <>
                                             <LetterSwap3D>
-                                                Kirim detail project
+                                                {t('Kirim detail project')}
                                             </LetterSwap3D>
                                             <ArrowRight
                                                 className="size-4 transition group-hover:translate-x-0.5"
@@ -3776,6 +4672,8 @@ function ContactSection() {
 }
 
 function Footer() {
+    const { t } = useTranslator();
+
     return (
         <footer className="px-2 pb-2 text-black">
             <div className="rounded-3xl bg-[#a7e33d] px-5 py-14 sm:px-8">
@@ -3785,21 +4683,26 @@ function Footer() {
                             href="#top"
                             className="inline-flex items-center gap-2 font-semibold focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none"
                         >
-                            <span className="flex size-7 items-center justify-center rounded-full bg-black font-display text-[15px] text-white italic">
-                                S
+                            <span className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-black ring-1 ring-black/10">
+                                <img
+                                    src={BRAND_LOGO_SRC}
+                                    alt=""
+                                    className="size-full object-cover"
+                                />
                             </span>
                             Solvara Studio
                         </a>
                         <p className="mt-5 max-w-sm text-[15px] leading-7 text-black/58">
-                            Studio digital dan infrastruktur IT untuk website,
-                            mobile, network, server, CCTV, dan support bisnis.
+                            {t(
+                                'Studio digital dan infrastruktur IT untuk website, mobile, network, server, CCTV, dan support bisnis.',
+                            )}
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-8">
+                    <div className="grid gap-8 sm:grid-cols-2">
                         <div>
                             <h3 className="text-[11px] font-semibold tracking-[0.2em] text-black/42 uppercase">
-                                Menu
+                                {t('Menu')}
                             </h3>
                             <ul className="mt-4 space-y-2 text-[14px]">
                                 {navItems.map((item) => (
@@ -3808,7 +4711,7 @@ function Footer() {
                                             href={item.href}
                                             className="hover:underline"
                                         >
-                                            {item.label}
+                                            {t(item.label)}
                                         </a>
                                     </li>
                                 ))}
@@ -3816,7 +4719,7 @@ function Footer() {
                         </div>
                         <div>
                             <h3 className="text-[11px] font-semibold tracking-[0.2em] text-black/42 uppercase">
-                                Contact
+                                {t('Contact')}
                             </h3>
                             <ul className="mt-4 space-y-2 text-[14px]">
                                 <li>
@@ -3848,7 +4751,7 @@ function Footer() {
 
                     <div>
                         <h3 className="text-[11px] font-semibold tracking-[0.2em] text-black/42 uppercase">
-                            Social
+                            {t('Social')}
                         </h3>
                         <div className="mt-4 flex gap-3">
                             {[
@@ -3889,13 +4792,13 @@ function Footer() {
                             className="mt-6 inline-flex h-10 items-center gap-2 rounded-full border border-black/15 bg-black/5 px-4 text-[13px] font-semibold text-black/72 transition hover:bg-black hover:text-white focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none"
                         >
                             <LayoutDashboard className="size-4" aria-hidden />
-                            Admin login
+                            {t('Admin login')}
                         </Link>
                     </div>
                 </div>
 
-                <div className="mx-auto mt-16 flex max-w-340 flex-col gap-3 border-t border-black/10 pt-5 text-[12px] text-black/42 sm:flex-row sm:items-center sm:justify-between">
-                    <p>© 2026 Solvara Studio. Built with clarity.</p>
+                <div className="mx-auto mt-12 flex max-w-340 flex-col gap-3 border-t border-black/10 pt-5 text-[12px] text-black/42 sm:mt-16 sm:flex-row sm:items-center sm:justify-between">
+                    <p>{t('© 2026 Solvara Studio. Built with clarity.')}</p>
                     <div className="flex flex-col gap-2 sm:items-end">
                         <a
                             href="https://www.instagram.com/intravert__"
@@ -3904,9 +4807,11 @@ function Footer() {
                             className="inline-flex items-center gap-2 font-semibold text-black/72 transition hover:text-black hover:underline focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none"
                         >
                             <Instagram className="size-3.5" aria-hidden />
-                            Design by Intra Sepriansa
+                            {t('Design by Intra Sepriansa')}
                         </a>
-                        <p>Web, mobile, network, server, CCTV, dan ISP.</p>
+                        <p>
+                            {t('Web, mobile, network, server, CCTV, dan ISP.')}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -3943,21 +4848,28 @@ function TechLoopLogoItem({ item }: { item: LogoItem }) {
 
 function HeroHeadline() {
     const reduce = useReducedMotion();
+    const { t } = useTranslator();
     const text = 'Solusi Web, Mobile, Network & Server untuk Bisnis Anda';
-    const lines = [
-        ['Solusi', 'Web,', 'Mobile,'],
-        ['Network', '&', 'Server'],
-    ] as const;
+    const lines =
+        t(text) === text
+            ? [
+                  ['Solusi', 'Web,', 'Mobile,'],
+                  ['Network', '&', 'Server'],
+              ]
+            : [
+                  ['Web,', 'Mobile,'],
+                  ['Network', '&', 'Server'],
+              ];
 
     if (reduce) {
         return (
-            <h1 className="solvara-hero-headline mt-9 w-full max-w-280 text-[48px] leading-[1.14] font-semibold text-black sm:text-[72px] lg:text-[88px] 2xl:mt-12 2xl:max-w-360 2xl:text-[122px]">
-                <span className="block">Solusi Web, Mobile,</span>
+            <h1 className="solvara-hero-headline mt-7 w-full max-w-280 text-[32px] leading-[1.12] font-semibold text-black sm:mt-9 sm:text-[72px] lg:text-[88px] 2xl:mt-12 2xl:max-w-360 2xl:text-[122px]">
+                <span className="block">{t('Solusi Web, Mobile,')}</span>
                 <span className="block">Network & Server</span>
                 <span className="block">
-                    untuk{' '}
+                    {t('untuk')}{' '}
                     <span className="font-display text-[#7eb61d] italic">
-                        Bisnis Anda
+                        {t('Bisnis Anda')}
                     </span>
                 </span>
             </h1>
@@ -3979,7 +4891,7 @@ function HeroHeadline() {
 
     return (
         <motion.h1
-            aria-label={text}
+            aria-label={t(text)}
             initial="hidden"
             animate="visible"
             variants={{
@@ -3991,7 +4903,7 @@ function HeroHeadline() {
                     },
                 },
             }}
-            className="solvara-hero-headline mt-9 w-full max-w-280 text-[48px] leading-[1.14] font-semibold text-black sm:text-[72px] lg:text-[88px] 2xl:mt-12 2xl:max-w-360 2xl:text-[122px]"
+            className="solvara-hero-headline mt-7 w-full max-w-280 text-[32px] leading-[1.12] font-semibold text-black sm:mt-9 sm:text-[72px] lg:text-[88px] 2xl:mt-12 2xl:max-w-360 2xl:text-[122px]"
         >
             <span aria-hidden="true">
                 {lines.map((line) => (
@@ -4016,7 +4928,7 @@ function HeroHeadline() {
                         variants={wordVariant}
                         className="inline-block will-change-transform"
                     >
-                        untuk&nbsp;
+                        {t('untuk')}&nbsp;
                     </motion.span>
                     <motion.span
                         variants={wordVariant}
@@ -4034,7 +4946,7 @@ function HeroHeadline() {
                             className="absolute inset-x-[-0.05em] bottom-[0.1em] h-[0.23em] origin-left rounded-full bg-gold/24 blur-[1px]"
                         />
                         <span className="relative font-display text-[#7eb61d] italic">
-                            Bisnis Anda
+                            {t('Bisnis Anda')}
                         </span>
                     </motion.span>
                 </span>
@@ -4197,9 +5109,10 @@ function LetterSwap3D({
 function ProjectSnapshot({ work, index }: { work: Work; index: number }) {
     const accents = ['#a7e33d', '#9ee5da', '#d8b56d', '#ef6f61'] as const;
     const accent = accents[index % accents.length];
+    const { t } = useTranslator();
 
     return (
-        <div className="relative h-65 overflow-hidden rounded-[18px] bg-[#050706] p-3">
+        <div className="relative h-58 overflow-hidden rounded-[18px] bg-[#050706] p-3 sm:h-65">
             <div
                 className="absolute inset-0 opacity-60"
                 style={{
@@ -4208,7 +5121,7 @@ function ProjectSnapshot({ work, index }: { work: Work; index: number }) {
             />
             <img
                 src={work.image}
-                alt={`Screenshot project ${work.name}`}
+                alt={`${t('Screenshot project')} ${work.name}`}
                 className="relative h-full w-full rounded-[14px] border border-white/10 object-cover object-top shadow-[0_22px_80px_-45px_rgba(0,0,0,0.95)] transition duration-500 group-hover:scale-[1.025]"
                 loading="lazy"
             />
@@ -4220,7 +5133,7 @@ function ProjectSnapshot({ work, index }: { work: Work; index: number }) {
                     className="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold text-black"
                     style={{ backgroundColor: accent }}
                 >
-                    Live
+                    {t('Live')}
                 </span>
             </div>
         </div>
@@ -4238,14 +5151,16 @@ function SectionHeader({
     description?: string;
     titleClassName?: string;
 }) {
+    const { t } = useTranslator();
+
     return (
         <div className="grid gap-6 md:grid-cols-[1fr_0.7fr] md:items-end">
             <div>
-                <SectionKicker>{eyebrow}</SectionKicker>
+                <SectionKicker>{t(eyebrow)}</SectionKicker>
                 <SplitHeading
-                    text={title}
+                    text={t(title)}
                     className={cn(
-                        'mt-4 max-w-3xl text-[36px] leading-[1.14] font-semibold tracking-tight sm:text-[52px]',
+                        'mt-4 max-w-3xl text-[32px] leading-[1.14] font-semibold tracking-tight sm:text-[52px]',
                         titleClassName,
                     )}
                 />
@@ -4253,7 +5168,7 @@ function SectionHeader({
             {description && (
                 <Reveal delay={0.08}>
                     <p className="max-w-md text-[15px] leading-7 text-white/55">
-                        {description}
+                        {t(description)}
                     </p>
                 </Reveal>
             )}
@@ -4326,39 +5241,44 @@ function Field({
     required?: boolean;
     className?: string;
 }) {
+    const { t } = useTranslator();
+
     return (
         <label className={cn('flex flex-col gap-1.5', className)}>
             <span className="flex items-center gap-1 text-[11px] font-semibold tracking-[0.16em] text-black/42 uppercase">
-                {label}
+                {t(label)}
                 {required && <span className="text-gold">*</span>}
             </span>
             {children}
             {error && (
-                <span className="text-[12px] text-[#9a3a31]">{error}</span>
+                <span className="text-[12px] text-[#9a3a31]">{t(error)}</span>
             )}
         </label>
     );
 }
 
 function SuccessState({ onReset }: { onReset: () => void }) {
+    const { t } = useTranslator();
+
     return (
         <div className="rounded-3xl border border-black/10 bg-soft p-8">
             <div className="flex size-12 items-center justify-center rounded-full bg-[#a7e33d] text-black">
                 <Check className="size-5" aria-hidden />
             </div>
             <h3 className="mt-6 text-[32px] leading-tight font-semibold tracking-tight">
-                Terima kasih. Detail awal project sudah terkirim.
+                {t('Terima kasih. Detail awal project sudah terkirim.')}
             </h3>
             <p className="mt-4 max-w-xl text-[15px] leading-7 text-black/56">
-                Kami akan meninjau scope-nya dulu sebelum memberi estimasi.
-                Biasanya respons keluar dalam 24 jam kerja.
+                {t(
+                    'Kami akan meninjau scope-nya dulu sebelum memberi estimasi. Biasanya respons keluar dalam 24 jam kerja.',
+                )}
             </p>
             <button
                 type="button"
                 onClick={onReset}
                 className="mt-7 inline-flex h-11 items-center rounded-xl border border-black/10 px-5 text-[13px] font-semibold transition hover:border-black/25 focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none"
             >
-                Kirim project lain
+                {t('Kirim project lain')}
             </button>
         </div>
     );

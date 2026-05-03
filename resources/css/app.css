@@ -247,6 +247,8 @@
     .letter-swap-3d {
         perspective: 320px;
         transform-style: preserve-3d;
+        max-width: 100%;
+        min-width: 0;
         white-space: nowrap;
     }
 
@@ -349,7 +351,6 @@
         --solvara-selection-fg: #ffffff;
     }
 
-    .solvara-landing.is-light .solvara-top-nav-logo,
     .solvara-landing.is-light footer .bg-black {
         --solvara-selection-bg: #a7e33d;
         --solvara-selection-fg: #071007;
@@ -390,16 +391,6 @@
             0 22px 70px -34px rgba(11, 17, 16, 0.32),
             0 1px 0 rgba(255, 255, 255, 0.92) inset !important;
         --tw-ring-color: rgba(11, 17, 16, 0.08) !important;
-    }
-
-    .solvara-landing.is-light .solvara-top-nav-logo {
-        background: #0b1110 !important;
-        color: #ffffff !important;
-    }
-
-    .solvara-landing.is-light .solvara-top-nav-logo-dot {
-        background: #a7e33d !important;
-        box-shadow: 0 0 18px rgba(167, 227, 61, 0.42);
     }
 
     .solvara-landing.is-light .solvara-top-nav-link {

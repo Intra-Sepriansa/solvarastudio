@@ -12,10 +12,14 @@ import {
 import { motion, useReducedMotion } from 'motion/react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
+import FloatingAppearanceToggle from '@/components/floating-appearance-toggle';
+import LanguageToggle from '@/components/language-toggle';
 import LogoLoop from '@/components/LogoLoop';
 import type { LogoItem } from '@/components/LogoLoop';
 import { findWorkBySlug, works } from '@/data/works';
 import type { Work } from '@/data/works';
+import { useAppearance } from '@/hooks/use-appearance';
+import { useTranslator } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { index as projectsIndex, show as projectShow } from '@/routes/projects';
@@ -38,19 +42,26 @@ export default function ProjectShow({ slug }: ProjectShowProps) {
     const project = findWorkBySlug(slug) ?? works[0];
     const related = works.filter((work) => work.slug !== project.slug);
     const reduce = useReducedMotion();
+    const { resolvedAppearance } = useAppearance();
+    const { t } = useTranslator();
+    const isLightMode = resolvedAppearance === 'light';
 
     return (
         <>
             <Head title={`${project.name} - Solvara Studio`}>
-                <meta name="description" content={project.summary} />
+                <meta name="description" content={t(project.summary)} />
+                <meta
+                    name="theme-color"
+                    content={isLightMode ? '#f6f8f2' : '#050706'}
+                />
             </Head>
 
-            <main className="min-h-screen overflow-x-hidden bg-black p-2 text-white antialiased">
-                <section className="relative overflow-hidden rounded-[28px] bg-[#f8faf2] text-black sm:rounded-[34px]">
-                    <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-[#d2ed71]/68 to-transparent" />
+            <main className="min-h-screen overflow-x-hidden bg-[#f6f8f2] p-2 text-[#0b1110] antialiased dark:bg-black dark:text-white">
+                <section className="relative overflow-hidden rounded-[24px] bg-white text-[#0b1110] shadow-[0_34px_120px_-88px_rgba(11,17,16,0.42)] sm:rounded-[34px] dark:bg-[#0b0d0c] dark:text-white dark:shadow-[0_34px_120px_-88px_rgba(167,227,61,0.35)]">
+                    <div className="absolute inset-x-0 bottom-0 h-80 bg-gradient-to-t from-[#d2ed71]/58 to-transparent dark:from-[#17200f]/90" />
                     <ProjectTopbar />
 
-                    <div className="relative mx-auto grid max-w-[1180px] gap-10 px-5 pt-36 pb-16 sm:px-8 md:pt-44 md:pb-24 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+                    <div className="relative mx-auto grid max-w-[1180px] gap-8 px-4 pt-30 pb-12 sm:gap-10 sm:px-8 sm:pt-36 sm:pb-16 md:pt-44 md:pb-24 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
                         <motion.div
                             initial={reduce ? false : { opacity: 0, y: 18 }}
                             animate={reduce ? undefined : { opacity: 1, y: 0 }}
@@ -59,35 +70,35 @@ export default function ProjectShow({ slug }: ProjectShowProps) {
                                 ease: [0.22, 1, 0.36, 1],
                             }}
                         >
-                            <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/72 px-4 py-2 text-[12px] font-semibold tracking-[0.16em] uppercase backdrop-blur">
+                            <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/4 px-3.5 py-2 text-[11px] font-semibold tracking-[0.16em] uppercase backdrop-blur sm:px-4 sm:text-[12px] dark:border-white/12 dark:bg-white/6">
                                 <Sparkles className="size-4 text-[#7eb61d]" />
-                                Project detail
+                                {t('Project detail')}
                             </div>
-                            <h1 className="mt-7 text-[56px] leading-[0.9] font-semibold tracking-tight sm:text-[84px]">
+                            <h1 className="mt-6 text-[42px] leading-[0.98] font-semibold tracking-tight sm:mt-7 sm:text-[84px]">
                                 {project.name}
                             </h1>
-                            <p className="mt-6 text-[15px] font-semibold tracking-[0.18em] text-black/42 uppercase">
-                                {project.category}
+                            <p className="mt-5 text-[13px] font-semibold tracking-[0.18em] text-black/42 uppercase sm:mt-6 sm:text-[15px] dark:text-white/42">
+                                {t(project.category)}
                             </p>
-                            <p className="mt-6 max-w-2xl text-[16px] leading-7 text-black/60 sm:text-[18px]">
-                                {project.summary}
+                            <p className="mt-5 max-w-2xl text-[15px] leading-7 text-black/60 sm:mt-6 sm:text-[18px] dark:text-white/58">
+                                {t(project.summary)}
                             </p>
 
-                            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                            <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row">
                                 <a
                                     href={project.liveUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-black px-5 text-[14px] font-semibold text-white transition hover:bg-[#1b211d] focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:outline-none"
+                                    className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] bg-black px-5 text-[14px] font-semibold text-white transition hover:bg-[#1b211d] focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:outline-none dark:bg-[#a7e33d] dark:text-black dark:hover:bg-[#d2ed71] dark:focus-visible:ring-[#a7e33d]/50"
                                 >
-                                    Buka live project
+                                    {t('Buka live project')}
                                     <ExternalLink className="size-4" />
                                 </a>
                                 <Link
                                     href={projectsIndex.url()}
                                     className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-black/12 bg-white/64 px-5 text-[14px] font-semibold text-black transition hover:bg-white focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none"
                                 >
-                                    Semua project
+                                    {t('Semua project')}
                                     <ArrowRight className="size-4" />
                                 </Link>
                             </div>
@@ -109,74 +120,31 @@ export default function ProjectShow({ slug }: ProjectShowProps) {
                                 delay: 0.08,
                                 ease: [0.22, 1, 0.36, 1],
                             }}
-                            className="rounded-[24px] border border-black/10 bg-black p-3 shadow-[0_38px_120px_-58px_rgba(0,0,0,0.9)]"
+                            className="rounded-[20px] border border-black/10 bg-white p-2.5 shadow-[0_38px_120px_-58px_rgba(11,17,16,0.55)] sm:rounded-[24px] sm:p-3 dark:bg-black dark:shadow-[0_38px_120px_-58px_rgba(0,0,0,0.9)]"
                         >
                             <ProjectHeroMedia project={project} />
                         </motion.div>
                     </div>
                 </section>
 
-                <section className="px-5 py-14 sm:px-8 md:py-20">
-                    <div className="mx-auto max-w-[1180px] space-y-8">
-                        <section className="rounded-[26px] border border-white/10 bg-[#111312] p-5 sm:p-7">
-                            <div className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] text-[#a7e33d] uppercase">
-                                <Gauge className="size-4" />
-                                Konteks penggunaan
-                            </div>
-                            <p className="mt-4 text-[15px] leading-7 text-white/58">
-                                {project.suitableFor}
-                            </p>
-                            <div className="mt-6 flex flex-wrap gap-2">
-                                {project.highlights.map((item) => (
-                                    <span
-                                        key={item}
-                                        className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[12px] text-white/68"
-                                    >
-                                        <Check className="size-3.5 text-[#a7e33d]" />
-                                        {item}
-                                    </span>
-                                ))}
-                            </div>
-                        </section>
+                <ProjectDepthSection project={project} />
 
-                        <DetailPanel
-                            title="Tantangan"
-                            body={project.challenge}
-                        />
-                        <DetailPanel title="Hasil" body={project.result} />
-
-                        <ListPanel
-                            title="Fitur utama"
-                            icon={<Layers3 className="size-4" />}
-                            items={project.features}
-                        />
-
-                        <ListPanel
-                            title="Animasi dan UI advanced"
-                            icon={<Sparkles className="size-4" />}
-                            items={project.animation}
-                        />
-
-                        <TechStackPanel items={project.techStack} />
-                    </div>
-                </section>
-
-                <section className="px-5 pb-16 sm:px-8 md:pb-24">
-                    <div className="mx-auto max-w-[1180px] border-t border-white/10 pt-10">
+                <section className="mt-2 overflow-hidden rounded-[24px] bg-white text-[#0b1110] shadow-[0_34px_120px_-88px_rgba(11,17,16,0.38)] sm:rounded-[28px] dark:bg-[#0b0d0c] dark:text-white dark:shadow-[0_34px_120px_-88px_rgba(0,0,0,0.8)]">
+                    <div className="mx-auto max-w-[1180px] px-4 py-10 sm:px-8 sm:py-12 md:py-16">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                             <div>
                                 <p className="text-[11px] font-semibold tracking-[0.18em] text-[#a7e33d] uppercase">
-                                    Project lain
+                                    {t('Project lain')}
                                 </p>
-                                <h2 className="mt-3 text-[34px] leading-none font-semibold tracking-tight">
-                                    Lihat konteks berbeda.
+                                <h2 className="mt-3 text-[28px] leading-tight font-semibold tracking-tight sm:text-[34px] sm:leading-none">
+                                    {t('Lihat konteks berbeda.')}
                                 </h2>
                             </div>
                             <Link
                                 href={projectsIndex.url()}
-                                className="inline-flex h-11 w-fit items-center gap-2 rounded-[12px] border border-white/12 px-4 text-[13px] font-semibold text-white transition hover:border-[#a7e33d]/45 hover:bg-white/6 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
+                                className="inline-flex h-11 w-fit items-center gap-2 rounded-[12px] border border-black/12 px-4 text-[13px] font-semibold text-black/72 transition hover:border-[#7eb61d]/45 hover:bg-black/5 hover:text-black focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none dark:border-white/12 dark:text-white dark:hover:border-[#a7e33d]/45 dark:hover:bg-white/6"
                             >
-                                Semua project
+                                {t('Semua project')}
                                 <ArrowUpRight className="size-4" />
                             </Link>
                         </div>
@@ -186,17 +154,17 @@ export default function ProjectShow({ slug }: ProjectShowProps) {
                                 <Link
                                     key={work.slug}
                                     href={projectShow.url(work.slug)}
-                                    className="group rounded-[22px] border border-white/10 bg-[#111312] p-3 transition hover:border-[#a7e33d]/45 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none"
+                                    className="group rounded-[22px] border border-black/10 bg-white p-3 shadow-[0_24px_80px_-72px_rgba(11,17,16,0.48)] transition hover:border-[#7eb61d]/45 focus-visible:ring-2 focus-visible:ring-[#a7e33d]/50 focus-visible:outline-none dark:border-white/10 dark:bg-[#111312] dark:shadow-none dark:hover:border-[#a7e33d]/45"
                                 >
                                     <img
                                         src={work.image}
-                                        alt={`Screenshot project ${work.name}`}
+                                        alt={`${t('Screenshot project')} ${work.name}`}
                                         className="aspect-[1.72] w-full rounded-[16px] object-cover object-top"
                                         loading="lazy"
                                     />
                                     <div className="p-2">
                                         <div className="mt-3 flex items-center justify-between gap-3">
-                                            <h3 className="text-[22px] font-semibold tracking-tight">
+                                            <h3 className="min-w-0 text-[20px] leading-tight font-semibold tracking-tight sm:text-[22px]">
                                                 {work.name}
                                             </h3>
                                             <span
@@ -206,8 +174,8 @@ export default function ProjectShow({ slug }: ProjectShowProps) {
                                                 )}
                                             />
                                         </div>
-                                        <p className="mt-2 line-clamp-2 text-[13px] leading-6 text-white/52">
-                                            {work.summary}
+                                        <p className="mt-2 line-clamp-2 text-[13px] leading-6 text-black/54 dark:text-white/52">
+                                            {t(work.summary)}
                                         </p>
                                     </div>
                                 </Link>
@@ -215,14 +183,16 @@ export default function ProjectShow({ slug }: ProjectShowProps) {
                         </div>
                     </div>
                 </section>
+                <FloatingAppearanceToggle />
             </main>
         </>
     );
 }
 
 function ProjectHeroMedia({ project }: { project: Work }) {
+    const { t } = useTranslator();
     const mediaClass =
-        'aspect-[1.74] w-full rounded-[18px] border border-white/10 object-cover object-top';
+        'aspect-[1.74] w-full rounded-[18px] border border-black/10 object-cover object-top dark:border-white/10';
 
     if (project.video) {
         return (
@@ -235,12 +205,12 @@ function ProjectHeroMedia({ project }: { project: Work }) {
                 loop
                 playsInline
                 preload="metadata"
-                aria-label={`Preview video project ${project.name}`}
+                aria-label={`${t('Preview video project')} ${project.name}`}
             >
                 <source src={project.video} type="video/mp4" />
                 <img
                     src={project.image}
-                    alt={`Screenshot project ${project.name}`}
+                    alt={`${t('Screenshot project')} ${project.name}`}
                     className={mediaClass}
                 />
             </video>
@@ -250,44 +220,50 @@ function ProjectHeroMedia({ project }: { project: Work }) {
     return (
         <img
             src={project.image}
-            alt={`Screenshot project ${project.name}`}
+            alt={`${t('Screenshot project')} ${project.name}`}
             className={mediaClass}
         />
     );
 }
 
 function ProjectTopbar() {
+    const { t } = useTranslator();
+
     return (
-        <header className="absolute top-4 right-4 left-4 z-20 mx-auto flex h-[58px] max-w-[1180px] items-center justify-between rounded-full border border-black/10 bg-black/92 px-4 text-white shadow-[0_18px_60px_-28px_rgba(167,227,61,0.7)] backdrop-blur-xl sm:h-[72px] sm:px-7">
+        <header className="absolute top-3 right-3 left-3 z-20 mx-auto flex h-[54px] max-w-[1180px] items-center justify-between rounded-full border border-black/10 bg-white/88 px-3 text-[#0b1110] shadow-[0_18px_60px_-34px_rgba(11,17,16,0.42)] backdrop-blur-xl sm:top-4 sm:right-4 sm:left-4 sm:h-[72px] sm:px-7 dark:border-white/12 dark:bg-black/92 dark:text-white dark:shadow-[0_18px_60px_-28px_rgba(167,227,61,0.7)]">
             <Link
                 href={home.url()}
-                className="inline-flex items-center gap-3 rounded-full focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
-                aria-label="Kembali ke Solvara Studio"
+                className="inline-flex items-center gap-3 rounded-full focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:outline-none dark:focus-visible:ring-white/40"
+                aria-label={t('Kembali ke Solvara Studio')}
             >
-                <span className="relative inline-flex size-7 items-center justify-center rounded-full bg-white text-black">
-                    <span className="font-display text-[15px] leading-none italic">
-                        S
-                    </span>
-                    <span className="absolute -right-0.5 -bottom-0.5 size-1.5 rounded-full bg-[#d8b56d]" />
-                </span>
-                <span className="text-[15px] font-semibold">
+                <img
+                    src="/logo.png"
+                    alt=""
+                    className="size-8 object-contain"
+                    aria-hidden
+                />
+                <span className="text-[14px] font-semibold max-[380px]:hidden sm:text-[15px]">
                     Solvara Studio
                 </span>
             </Link>
 
             <div className="flex items-center gap-2">
+                <LanguageToggle
+                    tone="adaptive"
+                    className="hidden sm:inline-flex"
+                />
                 <Link
                     href={projectsIndex.url()}
-                    className="hidden h-10 items-center gap-2 rounded-[12px] border border-white/12 px-4 text-[13px] font-semibold text-white/72 transition hover:bg-white/8 hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none sm:inline-flex"
+                    className="hidden h-10 items-center gap-2 rounded-[12px] border border-black/10 px-4 text-[13px] font-semibold text-black/64 transition hover:bg-black/5 hover:text-black focus-visible:ring-2 focus-visible:ring-black/20 focus-visible:outline-none sm:inline-flex dark:border-white/12 dark:text-white/72 dark:hover:bg-white/8 dark:hover:text-white dark:focus-visible:ring-white/30"
                 >
                     <ArrowLeft className="size-4" />
-                    Project
+                    {t('Project')}
                 </Link>
                 <Link
                     href={`${home.url()}#contact`}
-                    className="inline-flex h-10 items-center gap-2 rounded-[12px] bg-[#a7e33d] px-4 text-[13px] font-semibold text-black transition hover:bg-[#d2ed71] focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none"
+                    className="inline-flex h-10 items-center gap-2 rounded-[12px] bg-[#a7e33d] px-3 text-[12px] font-semibold text-black transition hover:bg-[#d2ed71] focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:outline-none sm:px-4 sm:text-[13px]"
                 >
-                    Diskusi
+                    {t('Diskusi')}
                     <ArrowRight className="size-4" />
                 </Link>
             </div>
@@ -295,46 +271,212 @@ function ProjectTopbar() {
     );
 }
 
-function DetailPanel({ title, body }: { title: string; body: string }) {
+function ProjectDepthSection({ project }: { project: Work }) {
+    const { t } = useTranslator();
+
     return (
-        <section className="rounded-[26px] border border-white/10 bg-[#111312] p-5 sm:p-7">
-            <h2 className="text-[28px] leading-tight font-semibold tracking-tight">
-                {title}
-            </h2>
-            <p className="mt-4 text-[15px] leading-7 text-white/58">{body}</p>
+        <section className="relative mt-2 overflow-hidden rounded-[24px] bg-white text-[#0b1110] shadow-[0_34px_120px_-88px_rgba(11,17,16,0.42)] sm:rounded-[28px] dark:bg-[#0b0d0c] dark:text-white dark:shadow-[0_34px_120px_-88px_rgba(167,227,61,0.35)]">
+            <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(167,227,61,0.16),transparent_34%),linear-gradient(180deg,rgba(246,248,242,0),rgba(210,237,113,0.12))] dark:bg-[radial-gradient(circle_at_12%_0%,rgba(167,227,61,0.14),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0))]"
+            />
+
+            <div className="relative mx-auto max-w-[1180px] px-4 py-10 sm:px-8 md:py-16">
+                <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
+                    <div className="max-w-2xl">
+                        <div className="flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] text-[#7eb61d] uppercase dark:text-[#a7e33d]">
+                            <Gauge className="size-4" />
+                            {t('Project breakdown')}
+                        </div>
+                        <h2 className="mt-5 text-[32px] leading-[1.08] font-semibold tracking-tight sm:text-[54px] lg:text-[58px]">
+                            {t(
+                                'Scope, alur, dan hasil dibuat jelas dari awal.',
+                            )}
+                        </h2>
+                    </div>
+
+                    <div className="max-w-3xl space-y-4 lg:justify-self-end">
+                        {project.overview.map((paragraph) => (
+                            <p
+                                key={paragraph}
+                                className="text-[16px] leading-8 text-black/64 dark:text-white/62"
+                            >
+                                {t(paragraph)}
+                            </p>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-8 overflow-hidden rounded-[20px] border border-black/10 bg-black/10 shadow-[0_28px_90px_-74px_rgba(11,17,16,0.42)] sm:mt-9 sm:rounded-[24px] dark:border-white/10 dark:bg-white/10 dark:shadow-none">
+                    <div className="grid gap-px md:grid-cols-2 xl:grid-cols-4">
+                        {project.delivery.map((item) => (
+                            <ProjectDeliveryCell key={item.label} item={item} />
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-7 grid gap-5 border-y border-black/10 py-6 sm:mt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center dark:border-white/10">
+                    <p className="border-l-2 border-[#a7e33d] pl-5 text-[15px] leading-7 font-medium text-black/70 dark:text-white/68">
+                        {t(project.suitableFor)}
+                    </p>
+                    <div className="flex flex-wrap gap-2 lg:justify-end">
+                        {project.highlights.map((item) => (
+                            <span
+                                key={item}
+                                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/4 px-3 py-1.5 text-[12px] font-medium text-black/62 dark:border-white/10 dark:bg-white/5 dark:text-white/62"
+                            >
+                                <Check className="size-3.5 text-[#7eb61d] dark:text-[#a7e33d]" />
+                                {t(item)}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="mt-8 grid gap-px overflow-hidden border-y border-black/10 bg-black/10 sm:mt-10 lg:grid-cols-3 dark:border-white/10 dark:bg-white/10">
+                    <ProjectTextBlock
+                        eyebrow="Problem"
+                        title="Tantangan"
+                        body={project.challenge}
+                    />
+                    <ProjectTextBlock
+                        eyebrow="Outcome"
+                        title="Hasil"
+                        body={project.result}
+                    />
+                    <div className="bg-white/78 p-5 sm:p-7 dark:bg-[#111312]/92">
+                        <p className="text-[11px] font-semibold tracking-[0.18em] text-[#7eb61d] uppercase dark:text-[#a7e33d]">
+                            {t('Workflow')}
+                        </p>
+                        <h3 className="mt-3 text-[24px] leading-tight font-semibold tracking-tight sm:text-[28px]">
+                            {t('Alur pengerjaan')}
+                        </h3>
+                        <ol className="mt-6 grid gap-4">
+                            {project.workflow.map((item, index) => (
+                                <li
+                                    key={item}
+                                    className="grid grid-cols-[auto_1fr] gap-3 text-[14px] leading-6 text-black/62 dark:text-white/60"
+                                >
+                                    <span className="flex size-7 items-center justify-center rounded-full bg-[#a7e33d] text-[11px] font-semibold text-black">
+                                        {index + 1}
+                                    </span>
+                                    <span>{t(item)}</span>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+                </div>
+
+                <div className="mt-8 overflow-hidden rounded-[20px] border border-black/10 bg-black/10 shadow-[0_28px_90px_-74px_rgba(11,17,16,0.38)] sm:mt-10 sm:rounded-[24px] dark:border-white/10 dark:bg-white/10 dark:shadow-none">
+                    <div className="grid gap-px lg:grid-cols-[1.16fr_0.84fr]">
+                        <ProjectListColumn
+                            title="Fitur utama"
+                            icon={<Layers3 className="size-4" />}
+                            items={project.features}
+                            columns="double"
+                        />
+                        <ProjectListColumn
+                            title="Animasi dan UI advanced"
+                            icon={<Sparkles className="size-4" />}
+                            items={project.animation}
+                        />
+                    </div>
+                </div>
+
+                <TechStackPanel items={project.techStack} />
+            </div>
         </section>
     );
 }
 
-function ListPanel({
+function ProjectDeliveryCell({ item }: { item: Work['delivery'][number] }) {
+    const { t } = useTranslator();
+
+    return (
+        <div className="min-h-38 bg-white/82 p-5 sm:p-6 dark:bg-[#111312]/92">
+            <p className="text-[11px] font-semibold tracking-[0.18em] text-black/36 uppercase dark:text-white/36">
+                {t(item.label)}
+            </p>
+            <p className="mt-3 text-[17px] leading-snug font-semibold tracking-tight text-[#0b1110] sm:mt-4 sm:text-[18px] dark:text-white">
+                {t(item.value)}
+            </p>
+        </div>
+    );
+}
+
+function ProjectTextBlock({
+    eyebrow,
+    title,
+    body,
+}: {
+    eyebrow: string;
+    title: string;
+    body: string;
+}) {
+    const { t } = useTranslator();
+
+    return (
+        <div className="bg-white/78 p-5 sm:p-7 dark:bg-[#111312]/92">
+            <p className="text-[11px] font-semibold tracking-[0.18em] text-[#7eb61d] uppercase dark:text-[#a7e33d]">
+                {t(eyebrow)}
+            </p>
+            <h3 className="mt-3 text-[24px] leading-tight font-semibold tracking-tight sm:text-[28px]">
+                {t(title)}
+            </h3>
+            <p className="mt-5 text-[15px] leading-7 text-black/62 dark:text-white/58">
+                {t(body)}
+            </p>
+        </div>
+    );
+}
+
+function ProjectListColumn({
     title,
     icon,
     items,
+    columns = 'single',
 }: {
     title: string;
     icon: ReactNode;
     items: string[];
+    columns?: 'single' | 'double';
 }) {
+    const { t } = useTranslator();
+
     return (
-        <section className="rounded-[26px] border border-white/10 bg-[#111312] p-5 sm:p-7">
-            <div className="flex items-center gap-2">
-                <span className="text-[#a7e33d]">{icon}</span>
-                <h2 className="text-[28px] leading-tight font-semibold tracking-tight">
-                    {title}
-                </h2>
+        <div className="bg-white/78 p-5 sm:p-7 dark:bg-[#111312]/92">
+            <div className="flex flex-col gap-4 border-b border-black/10 pb-5 sm:flex-row sm:items-start sm:justify-between dark:border-white/10">
+                <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-9 items-center justify-center rounded-full bg-[#a7e33d] text-black">
+                        {icon}
+                    </span>
+                    <h3 className="min-w-0 text-[24px] leading-tight font-semibold tracking-tight sm:text-[28px]">
+                        {t(title)}
+                    </h3>
+                </div>
+                <span className="w-fit shrink-0 rounded-full border border-black/10 px-3 py-1 text-[11px] font-semibold text-black/42 dark:border-white/10 dark:text-white/42">
+                    {items.length} {t('item')}
+                </span>
             </div>
-            <ul className="mt-6 grid gap-3">
-                {items.map((item) => (
+
+            <ul
+                className={cn(
+                    'mt-5 grid gap-px overflow-hidden rounded-[18px] border border-black/10 bg-black/10 dark:border-white/10 dark:bg-white/10',
+                    columns === 'double' && 'xl:grid-cols-2',
+                )}
+            >
+                {items.map((item, index) => (
                     <li
                         key={item}
-                        className="flex gap-3 border-t border-white/10 pt-3 text-[14px] leading-7 text-white/58 first:border-t-0 first:pt-0"
+                        className="grid min-h-22 grid-cols-[auto_1fr] gap-3 bg-white/78 p-4 text-[13px] leading-6 text-black/62 dark:bg-[#0d100f]/78 dark:text-white/60"
                     >
-                        <Check className="mt-1 size-4 shrink-0 text-[#a7e33d]" />
-                        <span>{item}</span>
+                        <span className="flex size-6 items-center justify-center rounded-full bg-[#a7e33d] text-[10px] font-semibold text-black">
+                            {index + 1}
+                        </span>
+                        <span>{t(item)}</span>
                     </li>
                 ))}
             </ul>
-        </section>
+        </div>
     );
 }
 
@@ -343,26 +485,32 @@ function TechStackPanel({ items }: { items: string[] }) {
     const [activeItem, setActiveItem] = useState(items[0]);
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
     const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
+    const { resolvedAppearance } = useAppearance();
+    const { t } = useTranslator();
+    const fadeOutColor = resolvedAppearance === 'light' ? '#ffffff' : '#0b0d0c';
     const activeLogo = getTechLogoItems([activeItem])[0] ?? logoItems[0];
 
     return (
-        <section className="relative overflow-hidden border-y border-white/10 py-10 sm:py-14">
+        <section className="relative overflow-hidden border-y border-black/10 py-9 sm:py-14 dark:border-white/10">
             <div className="grid gap-9 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
                 <div className="lg:sticky lg:top-28">
                     <p className="text-[11px] font-semibold tracking-[0.18em] text-[#a7e33d] uppercase">
-                        Tech stack
+                        {t('Tech stack')}
                     </p>
-                    <h2 className="mt-4 max-w-md text-[38px] leading-[1.02] font-semibold tracking-tight text-white sm:text-[54px]">
-                        Dibangun dengan stack yang sesuai kebutuhan produk.
+                    <h2 className="mt-4 max-w-md text-[32px] leading-[1.08] font-semibold tracking-tight text-[#0b1110] sm:text-[54px] dark:text-white">
+                        {t(
+                            'Dibangun dengan stack yang sesuai kebutuhan produk.',
+                        )}
                     </h2>
-                    <p className="mt-6 max-w-sm text-[15px] leading-7 text-white/42">
-                        Hover nama stack untuk melihat logo. Bagian ini sengaja
-                        dibuat seperti technical note, bukan daftar chip.
+                    <p className="mt-5 max-w-sm text-[14px] leading-7 text-black/46 sm:mt-6 sm:text-[15px] dark:text-white/42">
+                        {t(
+                            'Hover nama stack untuk melihat logo. Bagian ini sengaja dibuat seperti technical note, bukan daftar chip.',
+                        )}
                     </p>
                 </div>
 
                 <div className="min-w-0">
-                    <div className="relative overflow-hidden border-y border-white/10 py-5 text-white">
+                    <div className="relative overflow-hidden border-y border-black/10 py-5 text-[#0b1110] dark:border-white/10 dark:text-white">
                         <LogoLoop
                             logos={logoItems}
                             speed={58}
@@ -372,7 +520,7 @@ function TechStackPanel({ items }: { items: string[] }) {
                             hoverSpeed={0}
                             scaleOnHover
                             fadeOut
-                            fadeOutColor="#111312"
+                            fadeOutColor={fadeOutColor}
                             renderItem={(item) => (
                                 <TechLoopLogoItem item={item} />
                             )}
@@ -412,7 +560,7 @@ function TechStackPanel({ items }: { items: string[] }) {
                                     duration: 0.22,
                                     ease: [0.22, 1, 0.36, 1],
                                 }}
-                                className="pointer-events-none absolute z-10 hidden size-24 place-items-center rounded-[26px] border border-white/10 bg-[#0b0d0c]/94 text-white shadow-[0_28px_90px_-44px_rgba(167,227,61,0.9)] backdrop-blur-xl md:grid"
+                                className="pointer-events-none absolute z-10 hidden size-24 place-items-center rounded-[26px] border border-black/10 bg-white/94 text-[#0b1110] shadow-[0_28px_90px_-52px_rgba(11,17,16,0.65)] backdrop-blur-xl md:grid dark:border-white/10 dark:bg-[#0b0d0c]/94 dark:text-white dark:shadow-[0_28px_90px_-44px_rgba(167,227,61,0.9)]"
                                 style={{
                                     left: previewPosition.x,
                                     top: previewPosition.y,
@@ -420,13 +568,13 @@ function TechStackPanel({ items }: { items: string[] }) {
                             >
                                 <TechLoopLogoItem
                                     item={activeLogo}
-                                    className="size-16 text-white/88"
+                                    className="size-16 text-black/78 dark:text-white/88"
                                 />
                             </motion.div>
                         )}
 
-                        <p className="max-w-4xl text-[21px] leading-[1.72] font-medium text-white/72 sm:text-[28px] sm:leading-[1.68]">
-                            Project ini dibangun dengan{' '}
+                        <p className="max-w-4xl text-[18px] leading-[1.7] font-medium text-black/70 sm:text-[28px] sm:leading-[1.68] dark:text-white/72">
+                            {t('Project ini dibangun dengan')}{' '}
                             {items.map((item, index) => (
                                 <TechInlineToken
                                     key={item}
@@ -441,10 +589,9 @@ function TechStackPanel({ items }: { items: string[] }) {
                                     }
                                 />
                             ))}
-                            . Stack dipilih untuk menjaga alur development tetap
-                            cepat, interface mudah dikembangkan, backend rapi,
-                            dan quality check tetap realistis untuk kebutuhan
-                            project.
+                            {t(
+                                '. Stack dipilih untuk menjaga alur development tetap cepat, interface mudah dikembangkan, backend rapi, dan quality check tetap realistis untuk kebutuhan project.',
+                            )}
                         </p>
                     </div>
                 </div>
@@ -492,7 +639,7 @@ function TechLoopLogoItem({
     return (
         <span
             className={cn(
-                'inline-flex size-9 items-center justify-center text-white/58 transition duration-300 hover:scale-110 hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none motion-reduce:transition-none',
+                'inline-flex size-9 items-center justify-center text-black/58 transition duration-300 hover:scale-110 hover:text-black focus-visible:ring-2 focus-visible:ring-black/25 focus-visible:outline-none motion-reduce:transition-none dark:text-white/58 dark:hover:text-white dark:focus-visible:ring-white/30',
                 className,
             )}
             role="img"
