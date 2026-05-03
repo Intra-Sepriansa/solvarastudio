@@ -104,7 +104,7 @@ function ProjectTopbar() {
                 aria-label={t('Kembali ke Solvara Studio')}
             >
                 <img
-                    src="/logo.png"
+                    src="/logo-192.webp"
                     alt=""
                     className="size-8 object-contain"
                     aria-hidden

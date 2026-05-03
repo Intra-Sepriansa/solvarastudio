@@ -30,8 +30,19 @@
             }
         </style>
 
-        <link rel="icon" href="/logo.png" type="image/png">
-        <link rel="apple-touch-icon" href="/logo.png">
+        <link rel="icon" href="/apple-touch-icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+        @if (($page['component'] ?? null) === 'welcome')
+            <link
+                rel="preload"
+                as="image"
+                href="/landing/optimized/solvara-hero-texture-1280.webp"
+                imagesrcset="/landing/optimized/solvara-hero-texture-768.webp 768w, /landing/optimized/solvara-hero-texture-1280.webp 1280w, /landing/optimized/solvara-hero-texture-1600.webp 1600w"
+                imagesizes="100vw"
+                fetchpriority="high"
+            >
+        @endif
 
         @fonts
 

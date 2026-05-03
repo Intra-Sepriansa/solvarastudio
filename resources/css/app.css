@@ -265,31 +265,27 @@
         transform-origin: 50% 55%;
         transition:
             transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 560ms cubic-bezier(0.22, 1, 0.36, 1),
-            filter 560ms cubic-bezier(0.22, 1, 0.36, 1);
+            opacity 560ms cubic-bezier(0.22, 1, 0.36, 1);
         transition-delay: var(--letter-delay, 0s);
-        will-change: transform, opacity, filter;
+        will-change: transform, opacity;
     }
 
     .letter-swap-3d__back {
         position: absolute;
         inset: 0;
         opacity: 0;
-        filter: blur(3px);
         transform: translate3d(0, 115%, 0) rotateX(-82deg);
     }
 
     .group:hover .letter-swap-3d__front,
     .group:focus-visible .letter-swap-3d__front {
         opacity: 0;
-        filter: blur(3px);
         transform: translate3d(0, -115%, 0) rotateX(82deg);
     }
 
     .group:hover .letter-swap-3d__back,
     .group:focus-visible .letter-swap-3d__back {
         opacity: 1;
-        filter: blur(0);
         transform: translate3d(0, 0, 0) rotateX(0deg);
     }
 

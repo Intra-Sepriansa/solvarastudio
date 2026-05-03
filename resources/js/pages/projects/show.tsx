@@ -31,8 +31,7 @@ const accentClass: Record<Work['accent'], string> = {
     gold: 'bg-[#d8b56d]',
 };
 
-const simpleIcon = (slug: string) =>
-    `https://cdn.simpleicons.org/${slug}/000000`;
+const simpleIcon = (slug: string) => `/tech-icons/${slug}.svg`;
 
 type ProjectShowProps = {
     slug: string;
@@ -237,7 +236,7 @@ function ProjectTopbar() {
                 aria-label={t('Kembali ke Solvara Studio')}
             >
                 <img
-                    src="/logo.png"
+                    src="/logo-192.webp"
                     alt=""
                     className="size-8 object-contain"
                     aria-hidden

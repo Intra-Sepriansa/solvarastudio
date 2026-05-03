@@ -20,7 +20,7 @@ export function Logo({ className, compact = false }: LogoProps) {
                 className="relative inline-flex size-8 items-center justify-center overflow-hidden rounded-full border border-line bg-white"
             >
                 <img
-                    src="/logo.png"
+                    src="/logo-192.webp"
                     alt=""
                     className="size-full object-cover"
                 />

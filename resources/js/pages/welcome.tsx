@@ -95,7 +95,7 @@ const META = {
 
 const WHATSAPP_URL =
     'https://wa.me/6281298523453?text=Halo%20Intra%20Sepriansa%2C%20saya%20ingin%20konsultasi%20project%20di%20Solvara%20Studio.';
-const BRAND_LOGO_SRC = '/logo.png';
+const BRAND_LOGO_SRC = '/logo-192.webp';
 
 const navItems = [
     { href: '#work', label: 'Karya', hasDropdown: false },
@@ -138,7 +138,7 @@ const teamMembers: TeamMember[] = [
         name: 'INTRA SEPRIANSA',
         role: 'Web Developer',
         initials: 'IS',
-        photo: '/team/intra.jpeg',
+        photo: '/team/optimized/intra-640.webp',
         photoPosition: 'center',
         badge: 'Web Platform',
         statement:
@@ -155,7 +155,7 @@ const teamMembers: TeamMember[] = [
         name: 'MUHAMAD HARIRI FADILAH',
         role: 'Network Engineering',
         initials: 'MA',
-        photo: '/team/fadil.png',
+        photo: '/team/optimized/fadil-640.webp',
         photoPosition: 'center',
         badge: 'Network Layer',
         statement:
@@ -172,7 +172,7 @@ const teamMembers: TeamMember[] = [
         name: 'SALSA NABILA',
         role: 'Mobile Programming',
         initials: 'SN',
-        photo: '/team/salsa.png',
+        photo: '/team/optimized/salsa-640.webp',
         photoPosition: 'center',
         badge: 'Mobile Flow',
         statement:
@@ -1009,6 +1009,16 @@ const readinessOptions = [
     },
 ] as const;
 
+const solutionImage = (name: string) => ({
+    imageSrc: `/solusi/optimized/${name}-960.webp`,
+    imageSrcSet: [
+        `/solusi/optimized/${name}-640.webp 640w`,
+        `/solusi/optimized/${name}-960.webp 960w`,
+        `/solusi/optimized/${name}-1200.webp 1200w`,
+    ].join(', '),
+    imageSizes: '(min-width: 1280px) 560px, (min-width: 1024px) 48vw, 92vw',
+});
+
 const solutionTabs = [
     {
         id: 'web',
@@ -1020,7 +1030,7 @@ const solutionTabs = [
         icon: Globe2,
         imageLabel: 'Web interface',
         imageMetric: 'UI + admin',
-        imageSrc: '/solusi/web.png',
+        ...solutionImage('web'),
         imageAlt:
             'Ilustrasi pembuatan website dan dashboard bisnis Solvara Studio',
         problems: [
@@ -1063,7 +1073,7 @@ const solutionTabs = [
         icon: Smartphone,
         imageLabel: 'Mobile flow',
         imageMetric: 'PWA / app',
-        imageSrc: '/solusi/mobile.png',
+        ...solutionImage('mobile'),
         imageAlt:
             'Ilustrasi mobile experience dan aplikasi bisnis Solvara Studio',
         problems: [
@@ -1102,7 +1112,7 @@ const solutionTabs = [
         icon: Router,
         imageLabel: 'Network control',
         imageMetric: '10-100+ device',
-        imageSrc: '/solusi/network.png',
+        ...solutionImage('network'),
         imageAlt:
             'Ilustrasi teknisi menyiapkan jaringan WiFi dan LAN untuk bisnis',
         problems: [
@@ -1145,7 +1155,7 @@ const solutionTabs = [
         icon: ServerCog,
         imageLabel: 'Server operations',
         imageMetric: 'Backup + monitor',
-        imageSrc: '/solusi/server.png',
+        ...solutionImage('server'),
         imageAlt:
             'Ilustrasi engineer mengelola server, cloud, dan database bisnis',
         problems: [
@@ -1192,7 +1202,7 @@ const solutionTabs = [
         icon: Cctv,
         imageLabel: 'Security system',
         imageMetric: 'Remote view',
-        imageSrc: '/solusi/cctv.png',
+        ...solutionImage('cctv'),
         imageAlt:
             'Ilustrasi teknisi memasang CCTV dan sistem monitoring keamanan',
         problems: [
@@ -1235,7 +1245,7 @@ const solutionTabs = [
         icon: RadioTower,
         imageLabel: 'ISP backbone',
         imageMetric: 'BGP / OSPF',
-        imageSrc: '/solusi/isp.png',
+        ...solutionImage('isp'),
         imageAlt:
             'Ilustrasi engineer mengawasi jaringan ISP, backbone, dan monitoring NOC',
         problems: [
@@ -1284,8 +1294,7 @@ const portfolioSnapshots = [
     },
 ] as const;
 
-const simpleIcon = (slug: string) =>
-    `https://cdn.simpleicons.org/${slug}/000000`;
+const simpleIcon = (slug: string) => `/tech-icons/${slug}.svg`;
 
 const webLogoItems: LogoItem[] = [
     { src: simpleIcon('html5'), alt: 'HTML5' },
@@ -1656,11 +1665,20 @@ function Hero() {
             id="top"
             className="relative isolate min-h-[calc(100svh-16px)] w-full overflow-hidden rounded-3xl bg-white sm:rounded-4xl 2xl:rounded-[44px]"
         >
-            <img
-                src="/landing/solvara-hero-texture.png"
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover object-center"
-            />
+            <picture className="absolute inset-0 block">
+                <source
+                    type="image/webp"
+                    srcSet="/landing/optimized/solvara-hero-texture-768.webp 768w, /landing/optimized/solvara-hero-texture-1280.webp 1280w, /landing/optimized/solvara-hero-texture-1600.webp 1600w"
+                    sizes="100vw"
+                />
+                <img
+                    src="/landing/optimized/solvara-hero-texture-1280.webp"
+                    alt=""
+                    fetchPriority="high"
+                    decoding="async"
+                    className="h-full w-full object-cover object-center"
+                />
+            </picture>
             <div className="absolute inset-0 bg-white/18" />
             <div className="absolute inset-x-0 top-0 h-52 bg-linear-to-b from-white/92 via-white/54 to-white/0" />
             <div
@@ -1675,7 +1693,7 @@ function Hero() {
             />
 
             <div className="relative z-10 mx-auto flex min-h-[calc(100svh-16px)] w-full max-w-7xl flex-col items-center px-4 pt-34 pb-12 text-center sm:px-8 sm:pt-42 sm:pb-20 lg:pt-55 lg:pb-117.5 2xl:max-w-385 2xl:pt-80 2xl:pb-150">
-                <Reveal className="inline-flex max-w-full items-center gap-2 rounded-full border border-black/10 bg-white/72 px-3.5 py-2 text-[12px] leading-5 font-medium shadow-sm backdrop-blur sm:px-4 sm:text-[13px] 2xl:gap-3 2xl:px-6 2xl:py-3 2xl:text-[18px]">
+                <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-black/10 bg-white/72 px-3.5 py-2 text-[12px] leading-5 font-medium shadow-sm backdrop-blur sm:px-4 sm:text-[13px] 2xl:gap-3 2xl:px-6 2xl:py-3 2xl:text-[18px]">
                     <Sparkles
                         className="size-4 text-[#94c91b] 2xl:size-5"
                         aria-hidden
@@ -1683,22 +1701,17 @@ function Hero() {
                     {t(
                         'Web, mobile, network, server, CCTV, dan ISP-ready support',
                     )}
-                </Reveal>
+                </div>
 
                 <HeroHeadline />
 
-                <Reveal delay={0.16}>
-                    <p className="mt-5 w-full max-w-180 text-[15px] leading-7 font-medium text-black/78 [text-shadow:0_1px_24px_rgba(255,255,255,0.95)] sm:mt-7 sm:text-[18px] 2xl:mt-12 2xl:max-w-245 2xl:text-[25px] 2xl:leading-9">
-                        {t(
-                            'Dari setup WiFi cafe & kantor hingga infrastruktur server dan jaringan skala corporate & ISP, kami bantu bisnis Anda berjalan lebih stabil, aman, dan siap berkembang.',
-                        )}
-                    </p>
-                </Reveal>
+                <p className="mt-5 w-full max-w-180 text-[15px] leading-7 font-medium text-black/78 [text-shadow:0_1px_24px_rgba(255,255,255,0.95)] sm:mt-7 sm:text-[18px] 2xl:mt-12 2xl:max-w-245 2xl:text-[25px] 2xl:leading-9">
+                    {t(
+                        'Dari setup WiFi cafe & kantor hingga infrastruktur server dan jaringan skala corporate & ISP, kami bantu bisnis Anda berjalan lebih stabil, aman, dan siap berkembang.',
+                    )}
+                </p>
 
-                <Reveal
-                    delay={0.24}
-                    className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center"
-                >
+                <div className="mt-7 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:items-center">
                     <a
                         href="#contact"
                         className="group inline-flex h-12 w-full max-w-full items-stretch justify-center overflow-hidden rounded-xl bg-[#a7e33d] text-[14px] font-semibold text-black transition hover:bg-[#97d22e] focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:outline-none sm:w-auto sm:max-w-none 2xl:h-16 2xl:rounded-2xl 2xl:text-[20px]"
@@ -1723,12 +1736,9 @@ function Hero() {
                     >
                         <LetterSwap3D>{t('Hubungi via WhatsApp')}</LetterSwap3D>
                     </a>
-                </Reveal>
+                </div>
 
-                <Reveal
-                    delay={0.32}
-                    className="mt-6 flex max-w-210 flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-black/76 [text-shadow:0_1px_20px_rgba(255,255,255,0.95)] sm:mt-7 sm:text-[12px] 2xl:text-[17px]"
-                >
+                <div className="mt-6 flex max-w-210 flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-black/76 [text-shadow:0_1px_20px_rgba(255,255,255,0.95)] sm:mt-7 sm:text-[12px] 2xl:text-[17px]">
                     {heroCapabilities.map((item) => (
                         <span
                             key={item}
@@ -1737,7 +1747,7 @@ function Hero() {
                             {t(item)}
                         </span>
                     ))}
-                </Reveal>
+                </div>
 
                 <div className="mt-9 w-full max-w-84 sm:mt-12 sm:max-w-87.5 lg:hidden">
                     <MobileShowcase />
@@ -1826,23 +1836,14 @@ function DashboardShowcase() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeView.id}
-                            initial={
-                                reduce
-                                    ? false
-                                    : { opacity: 0, y: 12, filter: 'blur(8px)' }
-                            }
-                            animate={
-                                reduce
-                                    ? undefined
-                                    : { opacity: 1, y: 0, filter: 'blur(0px)' }
-                            }
+                            initial={reduce ? false : { opacity: 0, y: 12 }}
+                            animate={reduce ? undefined : { opacity: 1, y: 0 }}
                             exit={
                                 reduce
                                     ? undefined
                                     : {
                                           opacity: 0,
                                           y: -8,
-                                          filter: 'blur(6px)',
                                       }
                             }
                             transition={{
@@ -2327,7 +2328,6 @@ function ProjectReadinessPanel() {
                                         : {
                                               opacity: 0,
                                               y: 12,
-                                              filter: 'blur(8px)',
                                           }
                                 }
                                 animate={
@@ -2336,7 +2336,6 @@ function ProjectReadinessPanel() {
                                         : {
                                               opacity: 1,
                                               y: 0,
-                                              filter: 'blur(0px)',
                                           }
                                 }
                                 exit={
@@ -2345,7 +2344,6 @@ function ProjectReadinessPanel() {
                                         : {
                                               opacity: 0,
                                               y: -8,
-                                              filter: 'blur(6px)',
                                           }
                                 }
                                 transition={{
@@ -2682,7 +2680,6 @@ function SolutionDetailSection() {
                                         : {
                                               opacity: 0,
                                               y: 14,
-                                              filter: 'blur(4px)',
                                           }
                                 }
                                 animate={
@@ -2691,7 +2688,6 @@ function SolutionDetailSection() {
                                         : {
                                               opacity: 1,
                                               x: 0,
-                                              filter: 'blur(0px)',
                                           }
                                 }
                                 exit={
@@ -2700,12 +2696,10 @@ function SolutionDetailSection() {
                                         : {
                                               opacity: 0,
                                               y: -10,
-                                              filter: 'blur(3px)',
                                           }
                                 }
                                 transition={{
                                     opacity: { duration: 0.22 },
-                                    filter: { duration: 0.28 },
                                     y: {
                                         type: 'spring',
                                         stiffness: 220,
@@ -2790,6 +2784,8 @@ function SolutionDetailSection() {
                                                 <motion.img
                                                     key={active.imageSrc}
                                                     src={active.imageSrc}
+                                                    srcSet={active.imageSrcSet}
+                                                    sizes={active.imageSizes}
                                                     alt={t(active.imageAlt)}
                                                     className="absolute inset-0 h-full w-full object-contain"
                                                     loading="lazy"
@@ -4847,7 +4843,6 @@ function TechLoopLogoItem({ item }: { item: LogoItem }) {
 }
 
 function HeroHeadline() {
-    const reduce = useReducedMotion();
     const { t } = useTranslator();
     const text = 'Solusi Web, Mobile, Network & Server untuk Bisnis Anda';
     const lines =
@@ -4861,48 +4856,9 @@ function HeroHeadline() {
                   ['Network', '&', 'Server'],
               ];
 
-    if (reduce) {
-        return (
-            <h1 className="solvara-hero-headline mt-7 w-full max-w-280 text-[32px] leading-[1.12] font-semibold text-black sm:mt-9 sm:text-[72px] lg:text-[88px] 2xl:mt-12 2xl:max-w-360 2xl:text-[122px]">
-                <span className="block">{t('Solusi Web, Mobile,')}</span>
-                <span className="block">Network & Server</span>
-                <span className="block">
-                    {t('untuk')}{' '}
-                    <span className="font-display text-[#7eb61d] italic">
-                        {t('Bisnis Anda')}
-                    </span>
-                </span>
-            </h1>
-        );
-    }
-
-    const wordVariant = {
-        hidden: { opacity: 0, y: '105%', filter: 'blur(10px)' },
-        visible: {
-            opacity: 1,
-            y: 0,
-            filter: 'blur(0px)',
-            transition: {
-                duration: 0.82,
-                ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            },
-        },
-    };
-
     return (
-        <motion.h1
+        <h1
             aria-label={t(text)}
-            initial="hidden"
-            animate="visible"
-            variants={{
-                hidden: {},
-                visible: {
-                    transition: {
-                        staggerChildren: 0.075,
-                        delayChildren: 0.1,
-                    },
-                },
-            }}
             className="solvara-hero-headline mt-7 w-full max-w-280 text-[32px] leading-[1.12] font-semibold text-black sm:mt-9 sm:text-[72px] lg:text-[88px] 2xl:mt-12 2xl:max-w-360 2xl:text-[122px]"
         >
             <span aria-hidden="true">
@@ -4912,46 +4868,27 @@ function HeroHeadline() {
                         className="block overflow-hidden pb-[0.05em]"
                     >
                         {line.map((word, index) => (
-                            <motion.span
-                                key={word}
-                                variants={wordVariant}
-                                className="inline-block will-change-transform"
-                            >
+                            <span key={word} className="inline-block">
                                 {word}
                                 {index < line.length - 1 && '\u00A0'}
-                            </motion.span>
+                            </span>
                         ))}
                     </span>
                 ))}
                 <span className="block overflow-hidden pb-[0.08em]">
-                    <motion.span
-                        variants={wordVariant}
-                        className="inline-block will-change-transform"
-                    >
-                        {t('untuk')}&nbsp;
-                    </motion.span>
-                    <motion.span
-                        variants={wordVariant}
-                        className="relative inline-block will-change-transform"
-                    >
-                        <motion.span
+                    <span className="inline-block">{t('untuk')}&nbsp;</span>
+                    <span className="relative inline-block">
+                        <span
                             aria-hidden
-                            initial={{ scaleX: 0, opacity: 0 }}
-                            animate={{ scaleX: 1, opacity: 1 }}
-                            transition={{
-                                duration: 0.8,
-                                delay: 0.78,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
                             className="absolute inset-x-[-0.05em] bottom-[0.1em] h-[0.23em] origin-left rounded-full bg-gold/24 blur-[1px]"
                         />
                         <span className="relative font-display text-[#7eb61d] italic">
                             {t('Bisnis Anda')}
                         </span>
-                    </motion.span>
+                    </span>
                 </span>
             </span>
-        </motion.h1>
+        </h1>
     );
 }
 
@@ -4997,12 +4934,10 @@ function SplitHeading({
                             hidden: {
                                 opacity: 0,
                                 y: 18,
-                                filter: 'blur(8px)',
                             },
                             visible: {
                                 opacity: 1,
                                 y: 0,
-                                filter: 'blur(0px)',
                                 transition: {
                                     duration: 0.62,
                                     ease: [0.22, 1, 0.36, 1],
@@ -5042,11 +4977,10 @@ function AnimatedMetricValue({
                 {Array.from(value).map((char, index) => (
                     <motion.span
                         key={`${char}-${index}`}
-                        initial={{ opacity: 0, y: '115%', filter: 'blur(4px)' }}
+                        initial={{ opacity: 0, y: '115%' }}
                         whileInView={{
                             opacity: 1,
                             y: 0,
-                            filter: 'blur(0px)',
                         }}
                         viewport={{ once: true, amount: 0.6 }}
                         transition={{
